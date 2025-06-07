@@ -6,7 +6,7 @@ import { SecureStorageKeys } from '~/util/secureStorageKeys';
 
 interface LoginCredentials {
     server: string;
-    username: string;
+    email: string;
     password: string;
 }
 
@@ -25,7 +25,7 @@ interface AuthUser {
 }
 
 export const AuthContext = React.createContext<{
-    currentUserQuery: ReturnType<typeof useQuery<AuthUser | null>>,
+    currentUser: ReturnType<typeof useQuery<AuthUser | null>>,
     login: ReturnType<typeof useMutation<AuthUser, Error, LoginCredentials>>,
     logout: ReturnType<typeof useMutation<unknown>>,
 } | undefined>(undefined);
@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
 
     const queryClient = useQueryClient();
     
-    const currentUserQuery = useQuery({
+    const currentUser = useQuery({
         queryKey: ['currentUser'],
         queryFn: async () => {
             const server = getItem(SecureStorageKeys.server);
@@ -61,19 +61,23 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     const login = useMutation({
         mutationKey: ['login'],
         mutationFn: async (cred: LoginCredentials) => {
-            const { server, username, password } = cred;
-            if (!server || !username || !password) {
+            // await new Promise(resolve => setTimeout(resolve, 3000)); // Simulate network delay
+            const { server, email, password } = cred;
+            if (!server || !email || !password) {
                 throw new Error("Login Failed: Missing credentials");
             }
+
+            // TODO validate input values
 
             const response = await axios.get<AuthUser>(`${server}/api/v2/users/me`, {
                 params: {
                     'remember-me': true, // always remember user
                 },
                 auth: {
-                    username,
+                    username: email,
                     password,
                 },
+                timeout: 10000, // 10 seconds timeout
             });
 
             if (response.status !== 200) {
@@ -114,7 +118,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     return (
         <AuthContext.Provider
             value={{
-                currentUserQuery,
+                currentUser,
                 login,
                 logout
             }}
