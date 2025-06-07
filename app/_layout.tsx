@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { AuthProvider } from '~/components/AuthProvider';
+import '~/global.css';
 import '~/util/http';
 
 const queryClient = new QueryClient();
