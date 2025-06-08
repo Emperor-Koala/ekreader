@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '~/components/HapticTab';
-import { IconSymbol } from '~/components/ui/IconSymbol';
+import { IconSymbol } from '~/components/ui-man/IconSymbol';
 // import { Colors } from '@/constants/Colors';
 
 export default function TabLayout() {

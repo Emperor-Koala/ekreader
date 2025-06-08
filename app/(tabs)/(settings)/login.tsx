@@ -1,10 +1,14 @@
 import { useRouter } from "expo-router";
+import { getItem } from "expo-secure-store";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, View } from "react-native";
+import Toast from "react-native-toast-message";
 import { z } from "zod";
 import { useAuthContext } from "~/components/AuthProvider";
-import { Button } from "~/components/ui/Button";
-import { Colors } from "~/constants/Colors";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Text } from "~/components/ui/text";
+import { SecureStorageKeys } from "~/lib/secureStorageKeys";
 
 const validator = z.object({
     server: z.string().url().min(1, "Server URL is required"),
@@ -17,11 +21,10 @@ const Login: React.FC = () => {
 
     const { currentUser, login } = useAuthContext();
 
-    const [server, setServer] = useState<string>('');
+    const [server, setServer] = useState<string>(getItem(SecureStorageKeys.server) || '');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
-//    const [errors, setErrors] = useState<{ server?: string; email?: string; password?: string }>({});
     const errors = useMemo(() => {
         const result = validator.safeParse({ server, email, password });
         if (result.success) {
@@ -58,12 +61,18 @@ const Login: React.FC = () => {
             {
                 onSuccess: () => {
                     // TODO: Show success message and redirect
-                    console.log("Login successful");
+                    // console.log("Login successful");
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Login Successful',
+                        text2: 'You are now logged in.',
+                        position: 'bottom',
+                        bottomOffset: 90,
+                    });
                     router.back();
                 },
                 onError: (error) => {
                     // Handle login error
-                    console.error("Login failed:", error);
                     setSubmitError(error.message || "Login failed. Please try again.");
                 },
             }
@@ -71,87 +80,55 @@ const Login: React.FC = () => {
     }, [server, email, password, login, router, setSubmitError, errors]);
 
     return (
-        <SafeAreaView style={styles.page}>
-            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    style={styles.body}
-                >
-                    <View style={styles.form}>
-                        <View>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Server"
-                                placeholderTextColor="#aaa"
-                                autoCapitalize="none"
-                                onChangeText={setServer}
-                                keyboardType="url"
-                            />
-                            {errors.server && <Text style={{ color: 'red' }}>{errors.server}</Text>}
-                        </View>
-                        <View>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Email"
-                                placeholderTextColor="#aaa"
-                                autoCapitalize="none"
-                                onChangeText={setEmail}
-                                keyboardType="email-address"
-                            />
-                            {errors.email && <Text style={{ color: 'red' }}>{errors.email}</Text>}
-                        </View>
-                        <View>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Password"
-                                placeholderTextColor="#aaa"
-                                secureTextEntry={true}
-                                autoCapitalize="none"
-                                onChangeText={setPassword}
-                            />
-                            {errors.password && <Text style={{ color: 'red' }}>{errors.password}</Text>}
-                        </View>
-                        <View>
-                            <Button
-                                disabled={login.isPending || !server || !email || !password || Object.keys(errors).length > 0}
-                                onPress={attemptLogin}
-                                activeOpacity={0.7}
-                            >
-                                {login.isPending ? (<ActivityIndicator size={16} color={Colors.light.primaryFg} />) : "LOGIN"}
-                            </Button>
-                            {submitError && <Text style={{ color: 'red', marginTop: 8 }}>{submitError}</Text>}
-                        </View>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                className="py-6 flex flex-1 items-center justify-center"
+            >
+                <View className="w-3/4 max-w-xs flex flex-col gap-3">
+                    <View>
+                        <Input
+                            placeholder="Server"
+                            autoCapitalize="none"
+                            defaultValue={server}
+                            onChangeText={setServer}
+                            keyboardType="url"
+                            className={errors.server ? "border-destructive" : ""}
+                        />
+                        {errors.server && <Text style={{ color: 'red' }}>{errors.server}</Text>}
                     </View>
-                </KeyboardAvoidingView>
-            </TouchableWithoutFeedback>
-        </SafeAreaView>
+                    <View>
+                        <Input
+                            placeholder="Email"
+                            autoCapitalize="none"
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            className={errors.email ? "border-destructive" : ""}
+                        />
+                        {errors.email && <Text style={{ color: 'red' }}>{errors.email}</Text>}
+                    </View>
+                    <View>
+                        <Input
+                            placeholder="Password"
+                            secureTextEntry={true}
+                            autoCapitalize="none"
+                            onChangeText={setPassword}
+                            className={errors.password ? "border-destructive" : ""}
+                        />
+                        {errors.password && <Text style={{ color: 'red' }}>{errors.password}</Text>}
+                    </View>
+                    <View>
+                        <Button
+                            disabled={login.isPending || !server || !email || !password || Object.keys(errors).length > 0}
+                            onPress={attemptLogin}
+                        >
+                            <Text>LOGIN</Text>
+                        </Button>
+                        {submitError && <Text style={{ color: 'red', marginTop: 8 }}>{submitError}</Text>}
+                    </View>
+                </View>
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
     );
 }
 export default Login;
-
-const styles = StyleSheet.create({
-    page: { flex: 1 },
-    body: {
-        paddingVertical: 24,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flex: 1,
-    },
-    form: {
-        width: '75%',
-        maxWidth: 300,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
-    },
-    input: {
-        borderRadius: 6,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        width: '100%',
-        height: 40,
-        paddingInline: 12,
-        backgroundColor: 'white',
-    },
-});

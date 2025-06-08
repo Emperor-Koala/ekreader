@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { deleteItemAsync, getItem, setItem } from 'expo-secure-store';
 import React, { useContext } from "react";
-import { SecureStorageKeys } from '~/util/secureStorageKeys';
+import { SecureStorageKeys } from '~/lib/secureStorageKeys';
 
 interface LoginCredentials {
     server: string;
@@ -41,8 +41,20 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
             if (!server) {
                 return null;
             }
+            if (!getItem(SecureStorageKeys.session)) {
+                // No session cookie, user is not logged in
+                return null;
+            }
 
-            const response = await axios.get<AuthUser>(`${server}/api/v2/users/me`);
+            const response = await axios.get<AuthUser>(
+                `${server}/api/v2/users/me`,
+                {
+                    params: {
+                        'remember-me': true, // always remember user
+                    },
+                    timeout: 10000, // 10 seconds timeout
+                }
+            );
 
             if (response.status !== 200) {
                 return null;
@@ -78,7 +90,17 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
                     password,
                 },
                 timeout: 10000, // 10 seconds timeout
+            }).catch((error) => {
+                console.error("Login request failed:", error);
+                if (error.response) {
+                    // Server responded with a status code outside the range of 2xx
+                    throw new Error(`Login Failed: ${error.response.status} - ${error.response.data}`);
+                }
+
             });
+            if (!response) {
+                throw new Error("Login Failed: No response from server");
+            }
 
             if (response.status !== 200) {
                 throw new Error("Login Failed: Invalid credentials");
@@ -105,10 +127,11 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
 
     const logout = useMutation({
         mutationKey: ['logout'],
-        mutationFn: async () => axios.get('/api/logout'),
+        mutationFn: async () => axios.post('/api/logout'),
         onSuccess: async () => {
-            // Clear the server URL and session cookies
-            await deleteItemAsync(SecureStorageKeys.server);
+            // Clear the session cookies
+            await deleteItemAsync(SecureStorageKeys.session);
+            await deleteItemAsync(SecureStorageKeys.remember);
 
             // remove current user data
             queryClient.setQueryData(['currentUser'], null);

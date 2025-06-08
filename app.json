@@ -10,11 +10,18 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "net.empko.ekreader",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      },
       "config": {
-        "usesNonExemptEncryption": false
+        "usesNonExemptEncryption": false,
       }
     },
     "android": {
+      "package": "net.empko.ekreader",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

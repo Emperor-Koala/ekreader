@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useAuthContext } from "~/components/AuthProvider";
 
 const SettingsScreen = () => {
@@ -18,27 +18,39 @@ const SettingsScreen = () => {
 
 
     return (
-        <SafeAreaView style={styles.page}>
-            <ScrollView contentContainerStyle={styles.body}>
+        <SafeAreaView className="flex-1">
+            <ScrollView className="py-6">
                 {currentUser.isLoading && (<ActivityIndicator />)}
                 {!currentUser.data ? (
                     <TouchableOpacity onPress={() => router.push("/(tabs)/(settings)/login")}>
-                        <View style={styles.row}>
+                        <View className="px-6 py-4 border-t border-b flex flex-row gap-3 border-gray-300">
                             <Text>Log In to Komga...</Text>
                         </View>
                     </TouchableOpacity>
                 ) : (
                     <>
-                        <View style={styles.row}>
+                        <View className="px-6 py-4 border-t border-b flex flex-row gap-3 border-gray-300">
                             <Text>Logged in as:</Text>
                             <Text>{currentUser.data.email}</Text>
                         </View>
                         <TouchableOpacity onPress={() => logout.mutate()}>
-                            <View style={styles.row}>
+                            <View className="px-6 py-4 border-t border-b flex flex-row gap-3 border-gray-300">
                                 <Text style={{color: 'red', fontWeight: 'bold'}}>Log Out...</Text>
                                 {logout.isPending && <ActivityIndicator size="small" color="#000" />}
                             </View>
                         </TouchableOpacity>
+                        {/* <TouchableOpacity onPress={() => Toast.show({
+                            type: 'info',
+                            text1: 'Feature Coming Soon',
+                            text2: 'This feature is not yet implemented.',
+                            // position: 'bottom',
+                            // bottomOffset: 90,
+                            topOffset: 60,
+                        })}>
+                            <View className="px-6 py-4 border-t border-b flex flex-row gap-3 border-gray-300">
+                                <Text>Test Toast</Text>
+                            </View>
+                        </TouchableOpacity> */}
                     </>
                 )}
             </ScrollView>
@@ -46,19 +58,3 @@ const SettingsScreen = () => {
     );
 };
 export default SettingsScreen;
-
-const styles = StyleSheet.create({
-    page: { flex: 1 },
-    body: { paddingVertical: 24 },
-    row: {
-        paddingHorizontal: 24,
-        paddingVertical: 18,
-        borderTopWidth: 0.5,
-        borderBottomWidth: 0.5,
-        borderColor: "#ccc",
-        display: "flex",
-        flexDirection: "row",
-        gap: 12,
-        // backgroundColor: "#fff",
-    }
-});
