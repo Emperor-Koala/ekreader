@@ -1,60 +1,80 @@
 import { useRouter } from "expo-router";
-import { ActivityIndicator, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
+  View,
+} from "react-native";
 import { useAuthContext } from "~/components/AuthProvider";
+import { Button } from "~/components/ui/button";
+import { Text } from "~/components/ui/text";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 const SettingsScreen = () => {
+  const router = useRouter();
 
-    const router = useRouter();
+  const { currentUser, logout } = useAuthContext();
 
-    const { currentUser, logout } = useAuthContext();
-    // If logged in, show:
-    // - account info
-    // - logout option
-    // - appearance
-    // - image reader settings
-    //   - upscaling/downscaling methods
-    //   - load small previews when dragging nav slider
-    // - epub reader settings
+  const { toggleColorScheme } = useColorScheme();
+  // If logged in, show:
+  // - image reader settings
+  //   - upscaling/downscaling methods
+  //   - load small previews when dragging nav slider
+  // - epub reader settings
 
+  return (
+    <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900">
+      <ScrollView className="py-6 px-4">
+        {currentUser.isLoading ? (
+          <ActivityIndicator />
+        ) : !currentUser.data ? (
+          <>
+            <Button
+              onPress={() => router.push("/(tabs)/(settings)/login")}
+              className="items-start mb-6"
+              variant="secondary"
+            >
+              <Text>Log In to Komga...</Text>
+            </Button>
 
-    return (
-        <SafeAreaView className="flex-1">
-            <ScrollView className="py-6">
-                {currentUser.isLoading && (<ActivityIndicator />)}
-                {!currentUser.data ? (
-                    <TouchableOpacity onPress={() => router.push("/(tabs)/(settings)/login")}>
-                        <View className="px-6 py-4 border-t border-b flex flex-row gap-3 border-gray-300">
-                            <Text>Log In to Komga...</Text>
-                        </View>
-                    </TouchableOpacity>
-                ) : (
-                    <>
-                        <View className="px-6 py-4 border-t border-b flex flex-row gap-3 border-gray-300">
-                            <Text>Logged in as:</Text>
-                            <Text>{currentUser.data.email}</Text>
-                        </View>
-                        <TouchableOpacity onPress={() => logout.mutate()}>
-                            <View className="px-6 py-4 border-t border-b flex flex-row gap-3 border-gray-300">
-                                <Text style={{color: 'red', fontWeight: 'bold'}}>Log Out...</Text>
-                                {logout.isPending && <ActivityIndicator size="small" color="#000" />}
-                            </View>
-                        </TouchableOpacity>
-                        {/* <TouchableOpacity onPress={() => Toast.show({
-                            type: 'info',
-                            text1: 'Feature Coming Soon',
-                            text2: 'This feature is not yet implemented.',
-                            // position: 'bottom',
-                            // bottomOffset: 90,
-                            topOffset: 60,
-                        })}>
-                            <View className="px-6 py-4 border-t border-b flex flex-row gap-3 border-gray-300">
-                                <Text>Test Toast</Text>
-                            </View>
-                        </TouchableOpacity> */}
-                    </>
-                )}
-            </ScrollView>
-        </SafeAreaView>
-    );
+            <Button
+              onPress={toggleColorScheme}
+              className="items-start"
+              variant="secondary"
+            >
+              <Text className="dark:text-white">Appearance</Text>
+            </Button>
+          </>
+        ) : (
+          <>
+            <View className="group flex items-start justify-center rounded-md web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2 bg-secondary px-4 py-2 native:px-5 native:py-3 mb-2">
+              <Text className="text-lg">Logged in as:</Text>
+              <Text className="text-lg">{currentUser.data.email}</Text>
+            </View>
+            <Button
+              onPress={() => logout.mutate()}
+              className="items-start mb-6"
+              variant="secondary"
+            >
+              <Text style={{ color: "red", fontWeight: "bold" }}>
+                Log Out...
+              </Text>
+              {logout.isPending && (
+                <ActivityIndicator size="small" color="#000" />
+              )}
+            </Button>
+
+            <Button
+              onPress={toggleColorScheme}
+              className="items-start"
+              variant="secondary"
+            >
+              <Text className="dark:text-white">Appearance</Text>
+            </Button>
+          </>
+        )}
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
 export default SettingsScreen;
