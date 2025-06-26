@@ -3,17 +3,14 @@ import React from "react";
 import { Platform } from "react-native";
 
 import { HapticTab } from "~/components/HapticTab";
-import { IconSymbol } from "~/components/ui-man/IconSymbol";
-// import { Colors } from '@/constants/Colors';
+import { House, Settings } from "~/lib/icons";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        // tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+        // headerShown: false,
         tabBarButton: HapticTab,
-        // tabBarBackground: TabBarBackground,
 
         tabBarStyle: Platform.select({
           ios: {
@@ -29,7 +26,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+            <House color={color} />
           ),
         }}
       />
@@ -38,7 +35,7 @@ export default function TabLayout() {
         options={{
           title: "Settings",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+            <Settings color={color} />
           ),
         }}
       />
