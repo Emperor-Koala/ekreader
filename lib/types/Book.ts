@@ -52,7 +52,7 @@ export const Book = z.object({
     lastModified: z.string().datetime().transform((val) => DateTime.fromISO(val)),
     page: z.number().int(),
     readDate: z.string().datetime().transform((val) => DateTime.fromISO(val)),
-  }),
+  }).nullable(),
   seriesId: z.string(),
   seriesTitle: z.string(),
   sizeBytes: z.number().int(),

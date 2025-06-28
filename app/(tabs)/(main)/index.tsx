@@ -1,6 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import { useMemo } from "react";
-import { ActivityIndicator, SafeAreaView, View } from "react-native";
+import { ActivityIndicator, SafeAreaView, ScrollView, View } from "react-native";
 import { z } from "zod";
 import { useAuthContext } from "~/components/AuthProvider";
 import { BookItem } from "~/components/BookItem";
@@ -36,12 +36,13 @@ export default function HomeScreen() {
     return data;
   }, [recentlyAddedBooks]);
 
+  // TODO: pull to refresh
   return (
     <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900">
       {currentUser.data ? (
-        <View className="p-5">
+        <ScrollView> 
           <View className="mb-3">
-            <Text className="text-2xl mb-2">Keep Reading</Text>
+            <Text className="text-2xl mb-2 pt-4 px-4">Keep Reading</Text>
             {
               keepReading.isLoading
               ? <ActivityIndicator />
@@ -51,6 +52,7 @@ export default function HomeScreen() {
                 <FlashList
                   data={keepReadingData}
                   horizontal
+                  contentContainerStyle={{paddingHorizontal: 16}}
                   renderItem={({item: book}) => (
                     <View className="p-2">
                       <BookItem book={book} />
@@ -62,13 +64,31 @@ export default function HomeScreen() {
           </View>
           {/* Row: Recently Added Books */}
           <View className="mb-3">
-            <Text className="text-2xl mb-2">Recently Added Books</Text>
+            <Text className="text-2xl mb-2 pt-4 px-4">Recently Added Books</Text>
+            {
+              recentlyAddedBooks.isLoading
+              ? <ActivityIndicator />
+              : recentlyAddedBooks.isError
+              ? (<Text>{recentlyAddedBooks.error.message}</Text>)
+              : (
+                <FlashList
+                  data={recentlyAddedBooksData}
+                  horizontal
+                  contentContainerStyle={{paddingHorizontal: 16}}
+                  renderItem={({item: book}) => (
+                    <View className="p-2">
+                      <BookItem book={book} />
+                    </View>
+                  )}
+                />
+              )
+            }
           </View>
           {/* Row: Recently Added Series */}
           <View className="mb-3">
             <Text className="text-2xl mb-2">Recently Added Series</Text>
           </View>
-        </View>
+        </ScrollView>
       ) : (
         <></>
       )}

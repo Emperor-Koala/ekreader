@@ -5,7 +5,7 @@ const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
     <Stack>
       <Stack.Screen
         name="index"
-        options={{ title: "Settings", headerShown: false }}
+        options={{ title: "Settings" }}
       />
       <Stack.Screen name="login" options={{ title: "Login" }} />
       <Stack.Screen name="appearance" options={{ title: "Appearance" }} />

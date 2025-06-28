@@ -55,12 +55,12 @@ export const useRecentlyAddedBooksList = () => {
         axios.post(
           '/api/v1/books/list',
           {
-            condition: {
-              readStatus: {
-                operator: "is",
-                value: "IN_PROGRESS"
-              }
-            }
+            // condition: {
+            //   readStatus: {
+            //     operator: "is",
+            //     value: "IN_PROGRESS"
+            //   }
+            // }
           },
           {
             params: {

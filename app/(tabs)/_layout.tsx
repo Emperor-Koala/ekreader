@@ -9,7 +9,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        // headerShown: false,
+        headerShown: false,
         tabBarButton: HapticTab,
 
         tabBarStyle: Platform.select({
@@ -22,7 +22,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="(main)"
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
