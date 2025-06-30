@@ -1,3 +1,4 @@
+import { ReaderProvider } from "@epubjs-react-native/core";
 import {
   DarkTheme,
   DefaultTheme,
@@ -54,12 +55,16 @@ export default function RootLayout() {
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-          <Toast />
+          <ReaderProvider>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "Library" }} />
+              <Stack.Screen name="book/[bookId]/index" options={{ title: "" }} />
+              <Stack.Screen name="book/[bookId]/read" options={{ title: "", headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+            <Toast />
+          </ReaderProvider>
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>

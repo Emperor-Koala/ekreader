@@ -11,7 +11,6 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarButton: HapticTab,
-
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
@@ -22,9 +21,9 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="(main)"
+        name="index"
         options={{
-          title: "Home",
+          title: "Library",
           tabBarIcon: ({ color }) => (
             <House color={color} />
           ),

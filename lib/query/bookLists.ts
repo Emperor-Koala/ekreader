@@ -54,14 +54,7 @@ export const useRecentlyAddedBooksList = () => {
       const [response, error] = await tryCatch(
         axios.post(
           '/api/v1/books/list',
-          {
-            // condition: {
-            //   readStatus: {
-            //     operator: "is",
-            //     value: "IN_PROGRESS"
-            //   }
-            // }
-          },
+          {},
           {
             params: {
               sort: 'createdDate,desc',

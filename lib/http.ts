@@ -22,22 +22,22 @@ axios.interceptors.request.use(async (config) => {
     getItemAsync(SecureStorageKeys.remember),
   ]);
 
-  let cookie = "";
+  let cookie = [];
   if (session.status === "fulfilled" && session.value) {
-    cookie += `${SecureStorageKeys.session}=${session.value}`;
+    cookie.push(`${SecureStorageKeys.session}=${session.value}`);
   }
   if (rememberMe.status === "fulfilled" && rememberMe.value) {
     if (rememberMe.value?.includes(";")) {
       const [value, expiry] = rememberMe.value.split(";");
       if (DateTime.fromMillis(parseInt(expiry)) >= DateTime.now()) {
-        cookie += `${SecureStorageKeys.remember}=${value}`;
+        cookie.push(`${SecureStorageKeys.remember}=${value}`);
       }
     } else {
-      cookie += `${SecureStorageKeys.remember}=${rememberMe.value}`;
+      cookie.push(`${SecureStorageKeys.remember}=${rememberMe.value}`);
     }
   }
 
-  config.headers.cookie = cookie;
+  config.headers.cookie = cookie.join(';');
 
   return config;
 });
