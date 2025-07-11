@@ -5,6 +5,7 @@ import { BookOpen } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   SafeAreaView,
   ScrollView,
   View,
@@ -39,15 +40,41 @@ export default function BookDetails() {
   );
 
   const downloadBook = useCallback(async () => {
-    await FileSystem.createDownloadResumable(
-      `${server}/api/v1/books/${bookId}/file`,
-      FileSystem.documentDirectory + `${bookId}.epub`,
-      {},
-      onDownloadProgress,
-    ).downloadAsync();
-    setIsDownloaded(true);
-    setDownloadProgress(-1);
-  }, [server, bookId, onDownloadProgress]);
+    const results = await Promise.allSettled([
+      FileSystem.createDownloadResumable(
+        `${server}/api/v1/books/${bookId}/file`,
+        FileSystem.documentDirectory + `${bookId}.epub`,
+        {},
+        onDownloadProgress,
+      ).downloadAsync(),
+      FileSystem.writeAsStringAsync(
+        FileSystem.documentDirectory + `${bookId}.meta.json`,
+        JSON.stringify(data),
+      ),
+    ]);
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for the file to be written
+    if (results.every((result) => result.status === "fulfilled")) {
+      // Successfully downloaded and saved metadata
+      setIsDownloaded(true);
+      setDownloadProgress(-1);
+    } else {
+      Alert.alert(
+        'Download Failed',
+        'There was an error downloading the book. Please try again later.',
+        [{ text: 'OK' }],
+      );
+      FileSystem.deleteAsync(FileSystem.documentDirectory + `${bookId}.epub`, { idempotent: true });
+      FileSystem.deleteAsync(FileSystem.documentDirectory + `${bookId}.meta.json`, { idempotent: true });
+      setIsDownloaded(false);
+      setDownloadProgress(-1);
+    }
+  }, [data, server, bookId, onDownloadProgress]);
+
+  const deleteBook = useCallback(async () => {
+    await FileSystem.deleteAsync(FileSystem.documentDirectory + `${bookId}.epub`);
+    await FileSystem.deleteAsync(FileSystem.documentDirectory + `${bookId}.meta.json`);
+    setIsDownloaded(false);
+  }, [setIsDownloaded, bookId]);
 
   useEffect(() => {
     const checkIfDownloaded = async () => {
@@ -104,7 +131,6 @@ export default function BookDetails() {
               <Link href={`/book/${bookId}/read`} asChild>
                 <Button
                   className="bg-purple-400 dark:bg-purple-600 flex-row gap-x-2 mt-4"
-                  disabled={downloadProgress >= 0}
                 >
                   <BookOpen className="stroke-white" />
                   <Text className="dark:text-white">Read</Text>
@@ -112,9 +138,7 @@ export default function BookDetails() {
               </Link>
               <Button
                 className="bg-purple-400 dark:bg-purple-600 flex-row gap-x-2 mt-4"
-                onPress={() => {
-                  // TODO implement
-                }}
+                onPress={deleteBook}
               >
                 <Trash className="stroke-white" />
                 <Text className="dark:text-white">Delete</Text>
