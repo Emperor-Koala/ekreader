@@ -5,18 +5,15 @@ import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/typ
 import { HeaderBackButton } from "@react-navigation/elements";
 import { useTheme } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system";
-import { DownloadProgressData } from "expo-file-system";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { getItem } from "expo-secure-store";
 import { cssInterop } from "nativewind";
-import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { forwardRef, useCallback, useMemo, useRef, useState } from "react";
 import { useWindowDimensions, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { BookmarkIcon, Chapters, CloseIcon } from "~/lib/icons";
-import { SecureStorageKeys } from "~/lib/secureStorageKeys";
 import { VoidCallback } from "~/lib/types";
 
 const BottomModal = cssInterop(BottomSheetModal, { className: 'style', handleClassName: 'handleStyle', bgClassName: 'backgroundStyle' });
@@ -28,8 +25,6 @@ export default function ReadBook() {
   const { colors } = useTheme();
 
   const { goBack } = useNavigation();
-
-  const server = getItem(SecureStorageKeys.server);
 
   const tocRef = useRef<BottomSheetModal>(null);
   const bookmarksRef = useRef<BottomSheetModal>(null);
@@ -67,25 +62,6 @@ export default function ReadBook() {
 
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const [downloadProgress, setDownloadProgress] = useState<number>(0);
-
-  const onDownloadProgress = (downloadProgress: DownloadProgressData) => {
-    const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
-    setDownloadProgress(progress);
-  };
-
-  const download = FileSystem.createDownloadResumable(
-    `${server}/api/v1/books/${bookId}/file`,
-    FileSystem.documentDirectory + `${bookId}.epub`,
-    {},
-    onDownloadProgress,
-  );
-
-  useEffect(() => {
-    download.downloadAsync();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <GestureHandlerRootView
       style={{
@@ -115,7 +91,7 @@ export default function ReadBook() {
           </Button>
         </View>
       </View>
-      {downloadProgress >= 1 && <Reader
+      <Reader
         src={FileSystem.documentDirectory + `${bookId}.epub`}
         fileSystem={useFileSystem}
         width={width}
@@ -125,7 +101,7 @@ export default function ReadBook() {
           console.log("double tapped");
           setIsFullScreen((prev) => !prev);
         }}
-      />}
+      />
 
       <TableOfContents ref={tocRef} close={closeToC} />
       <BookmarksList ref={bookmarksRef} close={closeBookmarks} />
