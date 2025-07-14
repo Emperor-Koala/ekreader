@@ -1,4 +1,5 @@
 import { Tabs } from "expo-router";
+import { Download } from "lucide-react-native";
 import React from "react";
 import { Platform } from "react-native";
 
@@ -27,6 +28,18 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <House color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="offline"
+        options={{
+          headerTitle: "Offline Downloads",
+          title: "Offline",
+          tabBarIcon: ({ color }) => (
+            <Download color={color} />
+          ),
+          headerShown: true,
+          
         }}
       />
       <Tabs.Screen

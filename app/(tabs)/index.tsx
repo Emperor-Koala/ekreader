@@ -13,10 +13,13 @@ import { useRecentlyAddedSeriesList } from "~/lib/query/seriesLists";
 import { Book } from "~/lib/types/Book";
 
 export default function HomeScreen() {
+  // TODO implement connectivity check, show offline message if not connected
+  // TODO show not loggged in message if not logged in
+
   const { currentUser } = useAuthContext();
   const keepReading = useKeepReadingList();
   const recentlyAddedBooks = useRecentlyAddedBooksList();
-  const recentlyAddedSeries = useRecentlyAddedSeriesList();
+  const recentlyAddedSeries = useRecentlyAddedSeriesList(); // TODO
 
   const keepReadingData = useMemo(() => {
     const data: z.infer<typeof Book>[] = [];
@@ -54,7 +57,7 @@ export default function HomeScreen() {
                   horizontal
                   contentContainerStyle={{paddingHorizontal: 16}}
                   renderItem={({item: book}) => (
-                    <View className="p-2">
+                    <View className="w-40 p-2">
                       <BookItem book={book} />
                     </View>
                   )}

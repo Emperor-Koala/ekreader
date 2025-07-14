@@ -16,6 +16,7 @@ import { Text } from "~/components/ui/text";
 import { Download } from "~/lib/icons/Download";
 import { Trash } from "~/lib/icons/Trash";
 import { useBookDetails } from "~/lib/query/bookDetails";
+import { useOfflineBookList } from "~/lib/query/bookLists";
 import { SecureStorageKeys } from "~/lib/secureStorageKeys";
 
 export default function BookDetails() {
@@ -27,8 +28,13 @@ export default function BookDetails() {
   const [isDownloaded, setIsDownloaded] = useState<boolean | null>(null);
   const [downloadProgress, setDownloadProgress] = useState<number>(-1);
 
+  const { downloadBook, deleteBook } = useOfflineBookList();
+
   const onDownloadProgress = useCallback(
     (progress: FileSystem.DownloadProgressData) => {
+      if (progress.totalBytesWritten === progress.totalBytesExpectedToWrite) {
+        return;
+      }
       setDownloadProgress(
         Math.round(
           (progress.totalBytesWritten / progress.totalBytesExpectedToWrite) *
@@ -39,52 +45,53 @@ export default function BookDetails() {
     [],
   );
 
-  const downloadBook = useCallback(async () => {
-    const results = await Promise.allSettled([
-      FileSystem.createDownloadResumable(
-        `${server}/api/v1/books/${bookId}/file`,
-        FileSystem.documentDirectory + `${bookId}.epub`,
-        {},
-        onDownloadProgress,
-      ).downloadAsync(),
-      FileSystem.writeAsStringAsync(
-        FileSystem.documentDirectory + `${bookId}.meta.json`,
-        JSON.stringify(data),
-      ),
-    ]);
-    await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for the file to be written
-    if (results.every((result) => result.status === "fulfilled")) {
-      // Successfully downloaded and saved metadata
-      setIsDownloaded(true);
-      setDownloadProgress(-1);
-    } else {
+  const download = useCallback(() => {
+    if (!data) {
       Alert.alert(
-        'Download Failed',
-        'There was an error downloading the book. Please try again later.',
+        'Error',
+        'Book data is not available. Please try again later.',
         [{ text: 'OK' }],
       );
-      FileSystem.deleteAsync(FileSystem.documentDirectory + `${bookId}.epub`, { idempotent: true });
-      FileSystem.deleteAsync(FileSystem.documentDirectory + `${bookId}.meta.json`, { idempotent: true });
-      setIsDownloaded(false);
-      setDownloadProgress(-1);
+      return;
     }
-  }, [data, server, bookId, onDownloadProgress]);
 
-  const deleteBook = useCallback(async () => {
-    await FileSystem.deleteAsync(FileSystem.documentDirectory + `${bookId}.epub`);
-    await FileSystem.deleteAsync(FileSystem.documentDirectory + `${bookId}.meta.json`);
-    setIsDownloaded(false);
-  }, [setIsDownloaded, bookId]);
+    downloadBook.mutate({
+      book: data,
+      onDownloadProgress,
+    }, {
+      onSettled: async () => {
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for the download to settle
+        setDownloadProgress(-1);
+      },
+      onSuccess: () => setIsDownloaded(true),
+      onError: (error) => {
+        Alert.alert(
+          'Download Failed',
+          error.message || 'There was an error downloading the book. Please try again later.',
+          [{ text: 'OK' }],
+        );
+        setIsDownloaded(false);
+      },
+    });
+  }, [data, onDownloadProgress, downloadBook]);
+
+  const remove = useCallback(() => {
+    deleteBook.mutate(
+      data!, {
+      onSuccess: () => setIsDownloaded(false),
+    });
+  }, [data, deleteBook]);
 
   useEffect(() => {
     const checkIfDownloaded = async () => {
+      const fileName = `${data?.metadata.title}-${bookId}`;
       const fileInfo = await FileSystem.getInfoAsync(
-        FileSystem.documentDirectory + `${bookId}.epub`,
+        FileSystem.documentDirectory + `${fileName}.epub`,
       );
       setIsDownloaded(fileInfo.exists);
     };
     checkIfDownloaded();
-  }, [bookId]);
+  }, [data, bookId]);
 
   return (
     <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900">
@@ -120,7 +127,7 @@ export default function BookDetails() {
           ) : !isDownloaded ? (
             <Button
               className="bg-purple-400 dark:bg-purple-600 flex-row gap-x-2 mt-4"
-              onPress={downloadBook}
+              onPress={download}
               disabled={downloadProgress >= 0}
             >
               <Download className="stroke-white" />
@@ -138,7 +145,7 @@ export default function BookDetails() {
               </Link>
               <Button
                 className="bg-purple-400 dark:bg-purple-600 flex-row gap-x-2 mt-4"
-                onPress={deleteBook}
+                onPress={remove}
               >
                 <Trash className="stroke-white" />
                 <Text className="dark:text-white">Delete</Text>

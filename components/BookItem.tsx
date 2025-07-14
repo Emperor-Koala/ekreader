@@ -4,17 +4,18 @@ import { TouchableOpacity, View } from "react-native";
 import { z } from "zod";
 import { SecureStorageKeys } from "~/lib/secureStorageKeys";
 import { Book } from "~/lib/types/Book";
+import { cn } from "~/lib/utils";
 import { Image } from "./ui/image";
 import { Text } from "./ui/text";
 
-export const BookItem = ({ book }: { book: z.infer<typeof Book> }) => {
+export const BookItem = ({ book, thumbnail, className }: { book: z.infer<typeof Book>, thumbnail?: string, className?: string }) => {
   const server = getItem(SecureStorageKeys.server);
   return (
     <Link href={`/book/${book.id}`} asChild>
       <TouchableOpacity activeOpacity={0.75}>
-        <View className="bg-neutral-100 dark:bg-neutral-700 shadow-sm p-1.5 rounded w-[9.5rem]">
+        <View className={cn("bg-neutral-100 dark:bg-neutral-700 shadow-sm p-1.5 rounded w-[9.5rem]", className)}>
           <Image
-            source={`${server}/api/v1/books/${book.id}/thumbnail`}
+            source={thumbnail ?? `${server}/api/v1/books/${book.id}/thumbnail`}
             placeholder={require("~/assets/images/react-logo.png")}
             className="w-full aspect-[0.7] bg-neutral-500"
           />

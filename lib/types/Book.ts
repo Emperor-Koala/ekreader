@@ -2,12 +2,12 @@ import { DateTime } from 'luxon';
 import { z } from 'zod';
 
 export const Book = z.object({
-  created: z.string().datetime().transform((val) => DateTime.fromISO(val)),
+  created: z.string().datetime({ offset: true }).transform((val) => DateTime.fromISO(val)),
   deleted: z.boolean(),
   fileHash: z.string(),
-  fileLastModified: z.string().datetime().transform((val) => DateTime.fromISO(val)),
+  fileLastModified: z.string().datetime({ offset: true }).transform((val) => DateTime.fromISO(val)),
   id: z.string(),
-  lastModified: z.string().datetime().transform((val) => DateTime.fromISO(val)),
+  lastModified: z.string().datetime({ offset: true }).transform((val) => DateTime.fromISO(val)),
   libraryId: z.string(),
   media: z.object({
     comment: z.string(),
@@ -25,9 +25,9 @@ export const Book = z.object({
         role: z.string(),
       }),
     ),
-    created: z.string().datetime().transform((val) => DateTime.fromISO(val)),
+    created: z.string().datetime({ offset: true }).transform((val) => DateTime.fromISO(val)),
     isbn: z.string(),
-    lastModified: z.string().datetime().transform((val) => DateTime.fromISO(val)),
+    lastModified: z.string().datetime({ offset: true }).transform((val) => DateTime.fromISO(val)),
     links: z.array(
       z.object({
         label: z.string(),
@@ -36,7 +36,7 @@ export const Book = z.object({
     ),
     number: z.string(),
     numberSort: z.number().int(),
-    releaseDate: z.string().date().nullable().transform((val) => val ? DateTime.fromISO(val) : null),
+    releaseDate: z.union([ z.string().date(), z.string().datetime({ offset: true }) ]).nullable().transform((val) => val ? DateTime.fromISO(val) : null),
     summary: z.string(),
     tags: z.array(z.string()),
     title: z.string(),
@@ -46,12 +46,12 @@ export const Book = z.object({
   oneshot: z.boolean(),
   readProgress: z.object({
     completed: z.boolean(),
-    created: z.string().datetime().transform((val) => DateTime.fromISO(val)),
+    created: z.string().datetime({ offset: true }).transform((val) => DateTime.fromISO(val)),
     deviceId: z.string(),
     deviceName: z.string(),
-    lastModified: z.string().datetime().transform((val) => DateTime.fromISO(val)),
+    lastModified: z.string().datetime({ offset: true }).transform((val) => DateTime.fromISO(val)),
     page: z.number().int(),
-    readDate: z.string().datetime().transform((val) => DateTime.fromISO(val)),
+    readDate: z.string().datetime({ offset: true }).transform((val) => DateTime.fromISO(val)),
   }).nullable(),
   seriesId: z.string(),
   seriesTitle: z.string(),
