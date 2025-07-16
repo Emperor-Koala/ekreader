@@ -8,10 +8,10 @@ import { cn } from "~/lib/utils";
 import { Image } from "./ui/image";
 import { Text } from "./ui/text";
 
-export const BookItem = ({ book, thumbnail, className }: { book: z.infer<typeof Book>, thumbnail?: string, className?: string }) => {
+export const BookItem = ({ book, thumbnail, className, offline }: { book: z.infer<typeof Book>, thumbnail?: string, className?: string, offline?: boolean }) => {
   const server = getItem(SecureStorageKeys.server);
   return (
-    <Link href={`/book/${book.id}`} asChild>
+    <Link href={offline ? `/local/${book.metadata.title}-${book.id}` : `/book/${book.id}`} asChild>
       <TouchableOpacity activeOpacity={0.75}>
         <View className={cn("bg-neutral-100 dark:bg-neutral-700 shadow-sm p-1.5 rounded w-[9.5rem]", className)}>
           <Image

@@ -31,7 +31,7 @@ export default function ReadBook() {
   const bookmarksRef = useRef<BottomSheetModal>(null);
   const settingsRef = useRef<BottomSheetModal>(null);
 
-  const { bookId } = useLocalSearchParams<{ bookId: string }>();
+  const { fileName } = useLocalSearchParams<{ fileName: string }>();
 
   const { bookmarks, isBookmarked, addBookmark, removeBookmark, getCurrentLocation } = useReader();
 
@@ -101,7 +101,7 @@ export default function ReadBook() {
         </View>
       </View>
       <Reader
-        src={FileSystem.documentDirectory + `${bookId}.epub`}
+        src={FileSystem.documentDirectory + `${fileName}.epub`}
         fileSystem={useFileSystem}
         width={width}
         height={isFullScreen ? height : height-insets.top}

@@ -135,7 +135,7 @@ export default function BookDetails() {
             </Button>
           ) : (
             <>
-              <Link href={`/book/${bookId}/read`} asChild>
+              <Link href={`/read/${data!.metadata.title}-${bookId}`} asChild>
                 <Button
                   className="bg-purple-400 dark:bg-purple-600 flex-row gap-x-2 mt-4"
                 >

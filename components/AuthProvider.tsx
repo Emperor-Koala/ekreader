@@ -1,3 +1,4 @@
+import { useNetInfo } from '@react-native-community/netinfo';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { deleteItemAsync, getItem, setItem } from "expo-secure-store";
@@ -37,11 +38,15 @@ export const AuthContext = React.createContext<
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
+  const { isConnected } = useNetInfo();
+  
   const queryClient = useQueryClient();
 
   const currentUser = useQuery({
-    queryKey: ["currentUser"],
+    queryKey: ["currentUser", isConnected],
     queryFn: async () => {
+      if (!isConnected) return null;
+      
       const server = getItem(SecureStorageKeys.server);
       if (!server) {
         return null;
@@ -64,8 +69,6 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       if (response.status !== 200) return null;
       if (!response.data) return null;
 
-      // TODO object validation?
-
       return response.data;
     },
   });
@@ -77,8 +80,6 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       if (!server || !email || !password) {
         throw new Error("Login Failed: Missing credentials");
       }
-
-      // TODO validate input values
 
       const [response, error] = await tryCatch(
         axios.get<AuthUser>(`${server}/api/v2/users/me`, {
@@ -120,8 +121,6 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       if (!response.data) {
         throw new Error("Login Failed: No user data returned");
       }
-
-      // TODO object validation?
 
       return response.data;
     },

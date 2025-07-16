@@ -74,8 +74,6 @@ const Login: React.FC = () => {
       { server, email, password },
       {
         onSuccess: () => {
-          // TODO: Show success message and redirect
-          // console.log("Login successful");
           Toast.show({
             type: "success",
             text1: "Login Successful",

@@ -59,7 +59,8 @@ export default function RootLayout() {
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "Library" }} />
               <Stack.Screen name="book/[bookId]/index" options={{ title: "" }} />
-              <Stack.Screen name="book/[bookId]/read" options={{ title: "", headerShown: false }} />
+              <Stack.Screen name="local/[fileName]/index" options={{ title: "" }} />
+              <Stack.Screen name="read/[fileName]" options={{ title: "", headerShown: false }} />
               <Stack.Screen name="+not-found" />
             </Stack>
             <StatusBar style={isDarkColorScheme ? "light" : "dark"} />

@@ -23,7 +23,7 @@ export default function OfflinePage() {
                                 style={{ width: "100%", padding: 16 }}
                                 renderItem={({item: book}) => (
                                     <View className="p-2">
-                                        <BookItem book={book.metadata} thumbnail={book.thumbnail} className="w-full" />
+                                        <BookItem book={book.metadata} thumbnail={book.thumbnail} className="w-full" offline />
                                     </View>
                                 )}
                             />

@@ -89,9 +89,14 @@ export const useOfflineBookList = () => {
   const query = useQuery({
       queryKey: ["offlineBooks"],
       queryFn: async () => {
-          const files = (await FileSystem.readDirectoryAsync(FileSystem.documentDirectory!))
+          const [response, error] = await tryCatch(FileSystem.readDirectoryAsync(FileSystem.documentDirectory!))
+
+          if (error) throw error; // TODO handle properly
+
+          const files = response
               .filter((file) => file.endsWith(".meta.json"))
               .map((file) => file.replace(".meta.json", ""));
+              
           const books = await Promise.all(
               files.map(async (file) => {
                   const metadata = await FileSystem.readAsStringAsync(
