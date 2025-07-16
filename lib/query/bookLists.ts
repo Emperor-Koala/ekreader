@@ -8,7 +8,6 @@ import { SecureStorageKeys } from "../secureStorageKeys";
 import { VoidCallback } from "../types";
 import { Book } from "../types/Book";
 import { paginatedResponse } from "../types/PaginatedResponse";
-import { tryCatch } from "../utils";
 
 const PaginatedBookList = paginatedResponse(Book);
 
@@ -18,27 +17,23 @@ export const useKeepReadingList = () => {
   return useInfiniteQuery({
     queryKey: ["keep-reading-book-list", currentUser?.data?.id],
     queryFn: async ({ pageParam }) => {
-      const [response, error] = await tryCatch(
-        axios.post(
-          '/api/v1/books/list',
-          {
-            condition: {
-              readStatus: {
-                operator: "is",
-                value: "IN_PROGRESS"
-              }
+      const response= await axios.post(
+        '/api/v1/books/list',
+        {
+          condition: {
+            readStatus: {
+              operator: "is",
+              value: "IN_PROGRESS"
             }
-          },
-          {
-            params: {
-              sort: 'readProgress.readDate,desc',
-              page: pageParam,
-            },
           }
-        )
+        },
+        {
+          params: {
+            sort: 'readProgress.readDate,desc',
+            page: pageParam,
+          },
+        }
       );
-
-      if (error) throw error; // TODO handle this properly
 
       return PaginatedBookList.parse(response.data);
     },
@@ -56,20 +51,16 @@ export const useRecentlyAddedBooksList = () => {
   return useInfiniteQuery({
     queryKey: ["recently-added-book-list", currentUser?.data?.id],
     queryFn: async ({ pageParam }) => {
-      const [response, error] = await tryCatch(
-        axios.post(
-          '/api/v1/books/list',
-          {},
-          {
-            params: {
-              sort: 'createdDate,desc',
-              page: pageParam,
-            },
-          }
-        )
+      const response = await axios.post(
+        '/api/v1/books/list',
+        {},
+        {
+          params: {
+            sort: 'createdDate,desc',
+            page: pageParam,
+          },
+        }
       );
-
-      if (error) throw error; // TODO handle this properly
 
       return PaginatedBookList.parse(response.data);
     },
@@ -89,14 +80,10 @@ export const useOfflineBookList = () => {
   const query = useQuery({
       queryKey: ["offlineBooks"],
       queryFn: async () => {
-          const [response, error] = await tryCatch(FileSystem.readDirectoryAsync(FileSystem.documentDirectory!))
-
-          if (error) throw error; // TODO handle properly
-
-          const files = response
+          const files = (await FileSystem.readDirectoryAsync(FileSystem.documentDirectory!))
               .filter((file) => file.endsWith(".meta.json"))
               .map((file) => file.replace(".meta.json", ""));
-              
+
           const books = await Promise.all(
               files.map(async (file) => {
                   const metadata = await FileSystem.readAsStringAsync(
