@@ -27,7 +27,7 @@ export const Series = z.object({
     lastModified: z.string().datetime().transform((val) => DateTime.fromISO(val)),
     libraryId: z.string(),
     metadata: z.object({
-        ageRating: z.number().int(),
+        ageRating: z.nullable(z.number().int()),
         alternateTitles: z.array(
             z.object({
                 label: z.string(),
@@ -52,9 +52,9 @@ export const Series = z.object({
         tags: z.array(z.string()),
         title: z.string(),
         titleSort: z.string(),
-        totalBookCount: z.number().int(),
+        totalBookCount: z.nullable(z.number().int()),
     }),
     name: z.string(),
     oneshot: z.boolean(),
-    url: z.string().url(),
+    url: z.string(),
 });

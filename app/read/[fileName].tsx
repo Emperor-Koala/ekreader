@@ -15,6 +15,7 @@ import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 import { BookmarkIcon, Chapters, CloseIcon, Settings } from "~/lib/icons";
+import { Trash } from "~/lib/icons/Trash";
 import { VoidCallback } from "~/lib/types";
 
 const BottomModal = cssInterop(BottomSheetModal, { className: 'style', handleClassName: 'handleIndicatorStyle', bgClassName: 'backgroundStyle' });
@@ -182,7 +183,7 @@ const BookmarksList = forwardRef<
   { close: VoidCallback; }
 >(({close}, ref) => {
 
-  const { bookmarks, getCurrentLocation, goToLocation } = useReader();
+  const { bookmarks, getCurrentLocation, goToLocation, removeBookmark } = useReader();
 
   const currentLocation = getCurrentLocation();
 
@@ -191,11 +192,11 @@ const BookmarksList = forwardRef<
       const mark = ( item.location.start.cfi === currentLocation?.start.cfi &&
                       item.location.end.cfi === currentLocation?.end.cfi );
       return (
-        <View className="flex flex-row">
+        <View className="flex flex-row items-center">
           <Button
             key={item.id}
             variant={mark ? "outline" : "ghost"}
-            className="w-full native:h-16 flex flex-row justify-start items-center gap-x-4 my-1 native:py-2"
+            className="flex-1 native:h-16 flex flex-row justify-start items-center gap-x-4 my-1 native:py-2"
             onPress={() => {
               goToLocation(item.location.start.cfi);
               close();
@@ -210,11 +211,13 @@ const BookmarksList = forwardRef<
               <Text className="italic" numberOfLines={1}>{item.text}</Text>
             </View>
           </Button>
-          {/* TODO: Delete button */}
+          <Button variant="ghost" onPress={() => removeBookmark(item)}>
+            <Trash className="stroke-red-500" />
+          </Button>
         </View>
       );
     },
-    [goToLocation, close, currentLocation]
+    [goToLocation, close, currentLocation, removeBookmark]
   );
 
   const sorted = useMemo(

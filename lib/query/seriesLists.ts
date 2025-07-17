@@ -10,7 +10,7 @@ export const useRecentlyAddedSeriesList = () => {
   const { currentUser } = useAuthContext();
 
   return useInfiniteQuery({
-    queryKey: ["recently-added-book-list", currentUser?.data?.id],
+    queryKey: ["home", "series-list", "recently-added", currentUser?.data?.id],
     queryFn: async ({ pageParam }) => {
       const response = await axios.get(
         '/api/v1/series/new',

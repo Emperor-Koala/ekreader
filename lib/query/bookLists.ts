@@ -15,7 +15,7 @@ export const useKeepReadingList = () => {
   const { currentUser } = useAuthContext();
 
   return useInfiniteQuery({
-    queryKey: ["keep-reading-book-list", currentUser?.data?.id],
+    queryKey: ["home", "book-list", "keep-reading", currentUser?.data?.id],
     queryFn: async ({ pageParam }) => {
       const response= await axios.post(
         '/api/v1/books/list',
@@ -49,7 +49,7 @@ export const useRecentlyAddedBooksList = () => {
   const { currentUser } = useAuthContext();
 
   return useInfiniteQuery({
-    queryKey: ["recently-added-book-list", currentUser?.data?.id],
+    queryKey: ["home", "book-list", "recently-added", currentUser?.data?.id],
     queryFn: async ({ pageParam }) => {
       const response = await axios.post(
         '/api/v1/books/list',

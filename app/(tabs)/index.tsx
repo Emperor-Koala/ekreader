@@ -1,10 +1,13 @@
 import { useNetInfo } from '@react-native-community/netinfo';
 import { FlashList } from "@shopify/flash-list";
-import { useMemo } from "react";
-import { ActivityIndicator, SafeAreaView, ScrollView, View } from "react-native";
-import { z } from "zod";
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from "react";
+import { ActivityIndicator, ScrollView, View } from "react-native";
+import { GestureHandlerRootView, RefreshControl } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthContext } from "~/components/AuthProvider";
 import { BookItem } from "~/components/BookItem";
+import { SeriesItem } from '~/components/SeriesItem';
 import { Text } from "~/components/ui/text";
 import { CloudOff } from '~/lib/icons/CloudOff';
 import { UserLock } from '~/lib/icons/UserLock';
@@ -13,37 +16,43 @@ import {
   useRecentlyAddedBooksList,
 } from "~/lib/query/bookLists";
 import { useRecentlyAddedSeriesList } from "~/lib/query/seriesLists";
-import { Book } from "~/lib/types/Book";
 
 export default function HomeScreen() {
+  const queryClient = useQueryClient();
   const { isConnected } = useNetInfo();
 
   const { currentUser } = useAuthContext();
   const keepReading = useKeepReadingList();
   const recentlyAddedBooks = useRecentlyAddedBooksList();
-  const recentlyAddedSeries = useRecentlyAddedSeriesList(); // TODO
+  const recentlyAddedSeries = useRecentlyAddedSeriesList();
 
   const keepReadingData = useMemo(() => {
-    const data: z.infer<typeof Book>[] = [];
-    if (keepReading.isLoading || keepReading.isError) return data;
-    for (const page of keepReading.data!.pages) {
-      data.push(...page.content)
-    }
-    return data;
+    if (keepReading.isLoading || keepReading.isError) return [];
+    return keepReading.data!.pages
+      .map((page) => page.content)
+      .reduce((prev, curr) => [...prev, ...curr]);
   }, [keepReading]);
 
   const recentlyAddedBooksData = useMemo(() => {
-    const data: z.infer<typeof Book>[] = [];
-    if (recentlyAddedBooks.isLoading || recentlyAddedBooks.isError) return data;
-    for (const page of recentlyAddedBooks.data!.pages) {
-      data.push(...page.content)
-    }
-    return data;
+    if (recentlyAddedBooks.isLoading || recentlyAddedBooks.isError) return [];
+    return recentlyAddedBooks.data!.pages
+      .map((page) => page.content)
+      .reduce((prev, curr) => [...prev, ...curr]);
   }, [recentlyAddedBooks]);
 
-  // TODO: pull to refresh
+  const recentlyAddedSeriesData = useMemo(() => {
+    if (recentlyAddedSeries.isLoading || recentlyAddedSeries.isError) return [];
+    return recentlyAddedSeries.data!.pages
+      .map((page) => page.content)
+      .reduce((prev, curr) => [...prev, ...curr]);
+  }, [recentlyAddedSeries]);
+
+  const onRefresh = useCallback(async () => {
+    await queryClient.resetQueries({ queryKey: ["home"] });
+  }, [queryClient]);
+
   return (
-    <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900">
+    <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900 pb-16">
       { 
         isConnected === null
         ? (<></>)
@@ -70,55 +79,82 @@ export default function HomeScreen() {
           </View>
         )
         : (
-          <ScrollView> 
-            <View className="mb-3">
-              <Text className="text-2xl mb-2 pt-4 px-4">Keep Reading</Text>
-              {
-                keepReading.isLoading
-                ? <ActivityIndicator />
-                : keepReading.isError
-                ? (<Text>{keepReading.error.message}</Text>)
-                : (
-                  <FlashList
-                    data={keepReadingData}
-                    horizontal
-                    contentContainerStyle={{paddingHorizontal: 16}}
-                    renderItem={({item: book}) => (
-                      <View className="w-40 p-2">
-                        <BookItem book={book} />
-                      </View>
-                    )}
-                  />
-                )
+          <GestureHandlerRootView>
+            <ScrollView
+              refreshControl={
+                <RefreshControl refreshing={false} onRefresh={onRefresh} />
               }
-            </View>
-            {/* Row: Recently Added Books */}
-            <View className="mb-3">
-              <Text className="text-2xl mb-2 pt-4 px-4">Recently Added Books</Text>
-              {
-                recentlyAddedBooks.isLoading
-                ? <ActivityIndicator />
-                : recentlyAddedBooks.isError
-                ? (<Text>{recentlyAddedBooks.error.message}</Text>)
-                : (
-                  <FlashList
-                    data={recentlyAddedBooksData}
-                    horizontal
-                    contentContainerStyle={{paddingHorizontal: 16}}
-                    renderItem={({item: book}) => (
-                      <View className="p-2">
-                        <BookItem book={book} />
-                      </View>
-                    )}
-                  />
-                )
-              }
-            </View>
-            {/* Row: Recently Added Series */}
-            <View className="mb-3">
-              <Text className="text-2xl mb-2">Recently Added Series</Text>
-            </View>
-          </ScrollView>
+            > 
+              <View className="mb-3">
+                <Text className="text-2xl mb-2 pt-4 px-4">Keep Reading</Text>
+                {
+                  keepReading.isLoading
+                  ? <ActivityIndicator />
+                  : keepReading.isError
+                  ? (<Text>{keepReading.error.message}</Text>)
+                  : (
+                    <FlashList
+                      data={keepReadingData}
+                      horizontal
+                      contentContainerStyle={{paddingHorizontal: 16}}
+                      renderItem={({item: book}) => (
+                        <View className="w-40 p-2">
+                          <BookItem book={book} />
+                        </View>
+                      )}
+                    />
+                  )
+                }
+              </View>
+              {/* Row: Recently Added Books */}
+              <View className="mb-3">
+                <Text className="text-2xl mb-2 pt-4 px-4">Recently Added Books</Text>
+                {
+                  recentlyAddedBooks.isLoading
+                  ? <ActivityIndicator />
+                  : recentlyAddedBooks.isError
+                  ? (<Text>{recentlyAddedBooks.error.message}</Text>)
+                  : (
+                    <FlashList
+                      data={recentlyAddedBooksData}
+                      horizontal
+                      onEndReached={recentlyAddedBooks.fetchNextPage}
+                      contentContainerStyle={{paddingHorizontal: 16}}
+                      renderItem={({item: book}) => (
+                        <View className="p-2">
+                          <BookItem book={book} />
+                        </View>
+                      )}
+                    />
+                  )
+                }
+              </View>
+              {/* Row: Recently Added Series */}
+              <View className="mb-3">
+                <Text className="text-2xl mb-2 pt-4 px-4">Recently Added Series</Text>
+                {
+                  recentlyAddedSeries.isLoading
+                  ? <ActivityIndicator />
+                  : recentlyAddedSeries.isError
+                  ? (<Text>{recentlyAddedSeries.error.message}</Text>)
+                  : (
+                    <FlashList
+                      data={recentlyAddedSeriesData}
+                      horizontal
+                      onEndReached={recentlyAddedSeries.fetchNextPage}
+                      contentContainerStyle={{paddingHorizontal: 16}}
+                      renderItem={({item: series}) => (
+                        <View className="p-2">
+                          <SeriesItem series={series} />
+                        </View>
+                      )}
+                    />
+                  )
+                }
+              </View>
+              {/* TODO: Browse section */}
+            </ScrollView>
+          </GestureHandlerRootView>
         )
       }
     </SafeAreaView>
