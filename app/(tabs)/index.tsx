@@ -49,7 +49,10 @@ export default function HomeScreen() {
 
   const onRefresh = useCallback(async () => {
     await queryClient.resetQueries({ queryKey: ["home"] });
-  }, [queryClient]);
+    keepReading.refetch();
+    recentlyAddedBooks.refetch();
+    recentlyAddedSeries.refetch();
+  }, [queryClient, keepReading, recentlyAddedBooks, recentlyAddedSeries]);
 
   return (
     <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900 pb-16">

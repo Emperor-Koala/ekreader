@@ -1,10 +1,10 @@
 import { Link, useLocalSearchParams, useNavigation } from "expo-router";
 import { getItem } from "expo-secure-store";
 import { BookOpen } from "lucide-react-native";
+import { DateTime } from "luxon";
 import { useCallback } from "react";
 import {
   ActivityIndicator,
-  SafeAreaView,
   ScrollView,
   View
 } from "react-native";
@@ -33,7 +33,7 @@ export default function BookDetails() {
   }, [data, deleteBook, goBack]);
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900">
+    <View className="flex-1 bg-neutral-200 dark:bg-neutral-900">
       {isLoading ? (
         <ActivityIndicator className="m-8" />
       ) : isError ? (
@@ -44,7 +44,7 @@ export default function BookDetails() {
           contentContainerClassName="pb-32"
         >
           <View className="flex flex-row gap-x-8">
-            <View className="w-1/2 max-w-44 aspect-[0.7] bg-neutral-500 shadow">
+            <View className="w-1/2 max-w-44 mb-4 aspect-[0.7] bg-neutral-500 shadow">
               <Image
                 className="w-full h-full"
                 source={`${server}/api/v1/books/${data!.id}/thumbnail`}
@@ -58,9 +58,13 @@ export default function BookDetails() {
               <Text className="font-light mb-3">
                 By {data!.metadata.authors.map(({ name }) => name).join(", ")}
               </Text>
-              <Text>{data!.metadata.summary}</Text>
-            </View>
-          </View>
+              {data!.metadata.releaseDate && (
+                <Text className="font-light">
+                  {data!.metadata.releaseDate.toLocaleString(
+                    DateTime.DATE_FULL,
+                  )}
+                </Text>
+              )}
           <Link href={`/read/${fileName}`} asChild>
             <Button
               className="bg-purple-400 dark:bg-purple-600 flex-row gap-x-2 mt-4"
@@ -76,9 +80,42 @@ export default function BookDetails() {
             <Trash className="stroke-white" />
             <Text className="dark:text-white">Delete</Text>
           </Button>
-          {/* TODO: Extra meta info */}
+            </View>
+          </View>
+              <Text>{data!.metadata.summary}</Text>
+          <View className="mt-4 flex-col gap-y-2">
+            <Text className="font-medium text-lg">Metadata for Nerds</Text>
+            <View className="flex-row">
+              <Text className="flex-1 font-medium">Size</Text>
+              <Text className="flex-[2]">{data!.size}</Text>
+            </View>
+            <View className="flex-row">
+              <Text className="flex-1 font-medium">Format</Text>
+              <Text className="flex-[2]">{data!.media.mediaProfile}</Text>
+            </View>
+            {
+              data!.metadata.isbn && (
+                <View className="flex-row">
+                  <Text className="flex-1 font-medium">ISBN</Text>
+                  <Text className="flex-[2]">{data!.metadata.isbn}</Text>
+                </View>
+              )
+            }
+            <View className="flex-row">
+              <Text className="flex-1 font-medium">File</Text>
+              <Text className="flex-[2]">{data!.url}</Text>
+            </View>
+            <View className="flex-row">
+              <Text className="flex-1 font-medium">Created</Text>
+              <Text className="flex-[2]">{data!.created.toLocaleString(DateTime.DATETIME_MED)}</Text>
+            </View>
+            <View className="flex-row">
+              <Text className="flex-1 font-medium">Last Modified</Text>
+              <Text className="flex-[2]">{data!.lastModified.toLocaleString(DateTime.DATETIME_MED)}</Text>
+            </View>
+          </View>
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 }

@@ -55,6 +55,7 @@ export const Book = z.object({
   }).nullable(),
   seriesId: z.string(),
   seriesTitle: z.string(),
+  size: z.string(),
   sizeBytes: z.number().int(),
   url: z.string(),
 });
