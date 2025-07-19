@@ -176,25 +176,27 @@ export default function BookDetails() {
               <Text className="flex-1 font-medium">Format</Text>
               <Text className="flex-[2]">{data!.media.mediaProfile}</Text>
             </View>
-            {
-              data!.metadata.isbn && (
-                <View className="flex-row">
-                  <Text className="flex-1 font-medium">ISBN</Text>
-                  <Text className="flex-[2]">{data!.metadata.isbn}</Text>
-                </View>
-              )
-            }
+            {data!.metadata.isbn && (
+              <View className="flex-row">
+                <Text className="flex-1 font-medium">ISBN</Text>
+                <Text className="flex-[2]">{data!.metadata.isbn}</Text>
+              </View>
+            )}
             <View className="flex-row">
               <Text className="flex-1 font-medium">File</Text>
               <Text className="flex-[2]">{data!.url}</Text>
             </View>
             <View className="flex-row">
               <Text className="flex-1 font-medium">Created</Text>
-              <Text className="flex-[2]">{data!.created.toLocaleString(DateTime.DATETIME_MED)}</Text>
+              <Text className="flex-[2]">
+                {data!.created.toLocaleString(DateTime.DATETIME_MED)}
+              </Text>
             </View>
             <View className="flex-row">
               <Text className="flex-1 font-medium">Last Modified</Text>
-              <Text className="flex-[2]">{data!.lastModified.toLocaleString(DateTime.DATETIME_MED)}</Text>
+              <Text className="flex-[2]">
+                {data!.lastModified.toLocaleString(DateTime.DATETIME_MED)}
+              </Text>
             </View>
           </View>
         </ScrollView>

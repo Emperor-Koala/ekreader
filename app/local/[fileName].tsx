@@ -3,11 +3,7 @@ import { getItem } from "expo-secure-store";
 import { BookOpen } from "lucide-react-native";
 import { DateTime } from "luxon";
 import { useCallback } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  View
-} from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Image } from "~/components/ui/image";
 import { Text } from "~/components/ui/text";
@@ -26,8 +22,7 @@ export default function BookDetails() {
   const { deleteBook } = useOfflineBookList();
 
   const remove = useCallback(() => {
-    deleteBook.mutate(
-      data!, {
+    deleteBook.mutate(data!, {
       onSuccess: goBack,
     });
   }, [data, deleteBook, goBack]);
@@ -65,24 +60,22 @@ export default function BookDetails() {
                   )}
                 </Text>
               )}
-          <Link href={`/read/${fileName}`} asChild>
-            <Button
-              className="bg-purple-400 dark:bg-purple-600 flex-row gap-x-2 mt-4"
-            >
-              <BookOpen className="stroke-white" />
-              <Text className="dark:text-white">Read</Text>
-            </Button>
-          </Link>
-          <Button
-            className="bg-purple-400 dark:bg-purple-600 flex-row gap-x-2 mt-4"
-            onPress={remove}
-          >
-            <Trash className="stroke-white" />
-            <Text className="dark:text-white">Delete</Text>
-          </Button>
+              <Link href={`/read/${fileName}`} asChild>
+                <Button className="bg-purple-400 dark:bg-purple-600 flex-row gap-x-2 mt-4">
+                  <BookOpen className="stroke-white" />
+                  <Text className="dark:text-white">Read</Text>
+                </Button>
+              </Link>
+              <Button
+                className="bg-purple-400 dark:bg-purple-600 flex-row gap-x-2 mt-4"
+                onPress={remove}
+              >
+                <Trash className="stroke-white" />
+                <Text className="dark:text-white">Delete</Text>
+              </Button>
             </View>
           </View>
-              <Text>{data!.metadata.summary}</Text>
+          <Text>{data!.metadata.summary}</Text>
           <View className="mt-4 flex-col gap-y-2">
             <Text className="font-medium text-lg">Metadata for Nerds</Text>
             <View className="flex-row">
@@ -93,25 +86,27 @@ export default function BookDetails() {
               <Text className="flex-1 font-medium">Format</Text>
               <Text className="flex-[2]">{data!.media.mediaProfile}</Text>
             </View>
-            {
-              data!.metadata.isbn && (
-                <View className="flex-row">
-                  <Text className="flex-1 font-medium">ISBN</Text>
-                  <Text className="flex-[2]">{data!.metadata.isbn}</Text>
-                </View>
-              )
-            }
+            {data!.metadata.isbn && (
+              <View className="flex-row">
+                <Text className="flex-1 font-medium">ISBN</Text>
+                <Text className="flex-[2]">{data!.metadata.isbn}</Text>
+              </View>
+            )}
             <View className="flex-row">
               <Text className="flex-1 font-medium">File</Text>
               <Text className="flex-[2]">{data!.url}</Text>
             </View>
             <View className="flex-row">
               <Text className="flex-1 font-medium">Created</Text>
-              <Text className="flex-[2]">{data!.created.toLocaleString(DateTime.DATETIME_MED)}</Text>
+              <Text className="flex-[2]">
+                {data!.created.toLocaleString(DateTime.DATETIME_MED)}
+              </Text>
             </View>
             <View className="flex-row">
               <Text className="flex-1 font-medium">Last Modified</Text>
-              <Text className="flex-[2]">{data!.lastModified.toLocaleString(DateTime.DATETIME_MED)}</Text>
+              <Text className="flex-[2]">
+                {data!.lastModified.toLocaleString(DateTime.DATETIME_MED)}
+              </Text>
             </View>
           </View>
         </ScrollView>

@@ -25,9 +25,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Library",
-          tabBarIcon: ({ color }) => (
-            <House color={color} />
-          ),
+          tabBarIcon: ({ color }) => <House color={color} />,
         }}
       />
       <Tabs.Screen
@@ -35,20 +33,15 @@ export default function TabLayout() {
         options={{
           headerTitle: "Offline Downloads",
           title: "Offline",
-          tabBarIcon: ({ color }) => (
-            <Download color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Download color={color} />,
           headerShown: true,
-          
         }}
       />
       <Tabs.Screen
         name="(settings)"
         options={{
           title: "Settings",
-          tabBarIcon: ({ color }) => (
-            <Settings color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Settings color={color} />,
         }}
       />
     </Tabs>

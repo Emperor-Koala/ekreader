@@ -37,7 +37,7 @@ axios.interceptors.request.use(async (config) => {
     }
   }
 
-  config.headers.cookie = cookie.join(';');
+  config.headers.cookie = cookie.join(";");
 
   return config;
 });

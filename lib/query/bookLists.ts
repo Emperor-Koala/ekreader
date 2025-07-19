@@ -1,4 +1,9 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import axios from "axios";
 import * as FileSystem from "expo-file-system";
 import { getItem } from "expo-secure-store";
@@ -17,29 +22,29 @@ export const useKeepReadingList = () => {
   return useInfiniteQuery({
     queryKey: ["home", "book-list", "keep-reading", currentUser?.data?.id],
     queryFn: async ({ pageParam }) => {
-      const response= await axios.post(
-        '/api/v1/books/list',
+      const response = await axios.post(
+        "/api/v1/books/list",
         {
           condition: {
             readStatus: {
               operator: "is",
-              value: "IN_PROGRESS"
-            }
-          }
+              value: "IN_PROGRESS",
+            },
+          },
         },
         {
           params: {
-            sort: 'readProgress.readDate,desc',
+            sort: "readProgress.readDate,desc",
             page: pageParam,
           },
-        }
+        },
       );
 
       return PaginatedBookList.parse(response.data);
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
-      return lastPage.last ? null : lastPage.pageable.pageNumber+1;
+      return lastPage.last ? null : lastPage.pageable.pageNumber + 1;
     },
     enabled: !!currentUser,
   });
@@ -52,21 +57,21 @@ export const useRecentlyAddedBooksList = () => {
     queryKey: ["home", "book-list", "recently-added", currentUser?.data?.id],
     queryFn: async ({ pageParam }) => {
       const response = await axios.post(
-        '/api/v1/books/list',
+        "/api/v1/books/list",
         {},
         {
           params: {
-            sort: 'createdDate,desc',
+            sort: "createdDate,desc",
             page: pageParam,
           },
-        }
+        },
       );
 
       return PaginatedBookList.parse(response.data);
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
-      return lastPage.last ? null : lastPage.pageable.pageNumber+1;
+      return lastPage.last ? null : lastPage.pageable.pageNumber + 1;
     },
     enabled: !!currentUser,
   });
@@ -76,10 +81,10 @@ export const useLibraryBooks = (libraryId: string) => {
   const { currentUser } = useAuthContext();
 
   return useInfiniteQuery({
-    queryKey: ['library', 'book-list', libraryId, currentUser?.data?.id],
+    queryKey: ["library", "book-list", libraryId, currentUser?.data?.id],
     queryFn: async ({ pageParam }) => {
       const response = await axios.post(
-        '/api/v1/books/list',
+        "/api/v1/books/list",
         {
           condition: {
             allOf: [
@@ -94,17 +99,17 @@ export const useLibraryBooks = (libraryId: string) => {
         },
         {
           params: {
-            sort: 'series,metadata.numberSort,asc',
+            sort: "series,metadata.numberSort,asc",
             page: pageParam,
           },
-        }
+        },
       );
 
       return PaginatedBookList.parse(response.data);
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
-      return lastPage.last ? null : lastPage.pageable.pageNumber+1;
+      return lastPage.last ? null : lastPage.pageable.pageNumber + 1;
     },
   });
 };
@@ -115,38 +120,40 @@ export const useOfflineBookList = () => {
   const queryClient = useQueryClient();
 
   const query = useQuery({
-      queryKey: ["offlineBooks"],
-      queryFn: async () => {
-          const files = (await FileSystem.readDirectoryAsync(FileSystem.documentDirectory!))
-              .filter((file) => file.endsWith(".meta.json"))
-              .map((file) => file.replace(".meta.json", ""));
+    queryKey: ["offlineBooks"],
+    queryFn: async () => {
+      const files = (
+        await FileSystem.readDirectoryAsync(FileSystem.documentDirectory!)
+      )
+        .filter((file) => file.endsWith(".meta.json"))
+        .map((file) => file.replace(".meta.json", ""));
 
-          const books = await Promise.all(
-              files.map(async (file) => {
-                  const metadata = await FileSystem.readAsStringAsync(
-                      FileSystem.documentDirectory + `${file}.meta.json`
-                  );
-                  return {
-                      metadata: Book.parse(JSON.parse(metadata)),
-                      thumbnail: `${FileSystem.documentDirectory}${file}.thumbnail`,
-                  };
-              })
+      const books = await Promise.all(
+        files.map(async (file) => {
+          const metadata = await FileSystem.readAsStringAsync(
+            FileSystem.documentDirectory + `${file}.meta.json`,
           );
-          return books;
-      },
+          return {
+            metadata: Book.parse(JSON.parse(metadata)),
+            thumbnail: `${FileSystem.documentDirectory}${file}.thumbnail`,
+          };
+        }),
+      );
+      return books;
+    },
   });
 
-  const downloadBook  = useMutation({
+  const downloadBook = useMutation({
     mutationKey: ["downloadBook"],
     mutationFn: async ({
       book,
       onDownloadProgress,
     }: {
-      book: z.infer<typeof Book>,
-      onDownloadProgress: VoidCallback<FileSystem.DownloadProgressData>,
+      book: z.infer<typeof Book>;
+      onDownloadProgress: VoidCallback<FileSystem.DownloadProgressData>;
     }) => {
       const fileName = `${book.metadata.title}-${book.id}`;
-      
+
       return Promise.all([
         FileSystem.createDownloadResumable(
           `${server}/api/v1/books/${book.id}/file`,
@@ -166,18 +173,45 @@ export const useOfflineBookList = () => {
     },
     onSuccess: (_, { book }) => {
       queryClient.setQueryData(
-        ["offlineBooks"], 
-        (oldData: {metadata: z.infer<typeof Book>, thumbnail: string}[] | undefined) => {
-          if (!oldData) return [{ metadata: book, thumbnail: `${FileSystem.documentDirectory}${book.metadata.title}-${book.id}.thumbnail` }];
-          return [...oldData, { metadata: book, thumbnail: `${FileSystem.documentDirectory}${book.metadata.title}-${book.id}.thumbnail` }];
-        }
+        ["offlineBooks"],
+        (
+          oldData:
+            | { metadata: z.infer<typeof Book>; thumbnail: string }[]
+            | undefined,
+        ) => {
+          if (!oldData)
+            return [
+              {
+                metadata: book,
+                thumbnail: `${FileSystem.documentDirectory}${book.metadata.title}-${book.id}.thumbnail`,
+              },
+            ];
+          return [
+            ...oldData,
+            {
+              metadata: book,
+              thumbnail: `${FileSystem.documentDirectory}${book.metadata.title}-${book.id}.thumbnail`,
+            },
+          ];
+        },
       );
     },
     onError: (error, { book }) => {
       console.error(`Failed to download book ${book.metadata.title}:`, error);
-      FileSystem.deleteAsync(FileSystem.documentDirectory + `${book.metadata.title}-${book.id}.epub`, { idempotent: true });
-      FileSystem.deleteAsync(FileSystem.documentDirectory + `${book.metadata.title}-${book.id}.meta.json`, { idempotent: true });
-      FileSystem.deleteAsync(FileSystem.documentDirectory + `${book.metadata.title}-${book.id}.thumbnail`, { idempotent: true });
+      FileSystem.deleteAsync(
+        FileSystem.documentDirectory + `${book.metadata.title}-${book.id}.epub`,
+        { idempotent: true },
+      );
+      FileSystem.deleteAsync(
+        FileSystem.documentDirectory +
+          `${book.metadata.title}-${book.id}.meta.json`,
+        { idempotent: true },
+      );
+      FileSystem.deleteAsync(
+        FileSystem.documentDirectory +
+          `${book.metadata.title}-${book.id}.thumbnail`,
+        { idempotent: true },
+      );
     },
   });
 
@@ -186,18 +220,31 @@ export const useOfflineBookList = () => {
     mutationFn: async (book: z.infer<typeof Book>) => {
       const fileName = `${book.metadata.title}-${book.id}`;
       await Promise.all([
-        FileSystem.deleteAsync(FileSystem.documentDirectory + `${fileName}.epub`, { idempotent: true }),
-        FileSystem.deleteAsync(FileSystem.documentDirectory + `${fileName}.meta.json`, { idempotent: true }),
-        FileSystem.deleteAsync(FileSystem.documentDirectory + `${fileName}.thumbnail`, { idempotent: true }),
+        FileSystem.deleteAsync(
+          FileSystem.documentDirectory + `${fileName}.epub`,
+          { idempotent: true },
+        ),
+        FileSystem.deleteAsync(
+          FileSystem.documentDirectory + `${fileName}.meta.json`,
+          { idempotent: true },
+        ),
+        FileSystem.deleteAsync(
+          FileSystem.documentDirectory + `${fileName}.thumbnail`,
+          { idempotent: true },
+        ),
       ]);
     },
     onSuccess: (_, book) => {
       queryClient.setQueryData(
-        ["offlineBooks"], 
-        (oldData: {metadata: z.infer<typeof Book>, thumbnail: string}[] | undefined) => {
+        ["offlineBooks"],
+        (
+          oldData:
+            | { metadata: z.infer<typeof Book>; thumbnail: string }[]
+            | undefined,
+        ) => {
           if (!oldData) return [];
-          return oldData.filter(({metadata}) => metadata.id !== book.id);
-        }
+          return oldData.filter(({ metadata }) => metadata.id !== book.id);
+        },
       );
     },
   });
@@ -207,4 +254,4 @@ export const useOfflineBookList = () => {
     downloadBook,
     deleteBook,
   };
-}
+};

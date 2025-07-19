@@ -1,1 +1,3 @@
-export type VoidCallback<T = unknown> = T extends object ? (data: T) => void : () => void;
+export type VoidCallback<T = unknown> = T extends object
+  ? (data: T) => void
+  : () => void;

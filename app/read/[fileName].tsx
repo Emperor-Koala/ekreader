@@ -1,13 +1,29 @@
-import { Bookmark, Reader, Section, Themes, useReader } from "@epubjs-react-native/core";
+import {
+  Bookmark,
+  Reader,
+  Section,
+  Themes,
+  useReader,
+} from "@epubjs-react-native/core";
 import { useFileSystem } from "@epubjs-react-native/expo-file-system";
-import { BottomSheetFlashList, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetFlashList,
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { useTheme } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { cssInterop } from "nativewind";
-import React, { forwardRef, useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useWindowDimensions, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,10 +34,13 @@ import { BookmarkIcon, Chapters, CloseIcon, Settings } from "~/lib/icons";
 import { Trash } from "~/lib/icons/Trash";
 import { VoidCallback } from "~/lib/types";
 
-const BottomModal = cssInterop(BottomSheetModal, { className: 'style', handleClassName: 'handleIndicatorStyle', bgClassName: 'backgroundStyle' });
+const BottomModal = cssInterop(BottomSheetModal, {
+  className: "style",
+  handleClassName: "handleIndicatorStyle",
+  bgClassName: "backgroundStyle",
+});
 
 export default function ReadBook() {
-
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
@@ -34,18 +53,23 @@ export default function ReadBook() {
 
   const { fileName } = useLocalSearchParams<{ fileName: string }>();
 
-  const { bookmarks, isBookmarked, addBookmark, removeBookmark, getCurrentLocation } = useReader();
+  const {
+    bookmarks,
+    isBookmarked,
+    addBookmark,
+    removeBookmark,
+    getCurrentLocation,
+  } = useReader();
 
   const toggleBookmark = useCallback(() => {
     const location = getCurrentLocation();
     if (!location) return;
 
-
     if (isBookmarked) {
-       const bookmark = bookmarks.find(
+      const bookmark = bookmarks.find(
         (item) =>
           item.location.start.cfi === location?.start.cfi &&
-          item.location.end.cfi === location?.end.cfi
+          item.location.end.cfi === location?.end.cfi,
       );
 
       if (!bookmark) return;
@@ -53,7 +77,13 @@ export default function ReadBook() {
     } else {
       addBookmark(location);
     }
-  }, [getCurrentLocation, addBookmark, removeBookmark, isBookmarked, bookmarks]);
+  }, [
+    getCurrentLocation,
+    addBookmark,
+    removeBookmark,
+    isBookmarked,
+    bookmarks,
+  ]);
 
   const closeToC = useCallback(() => {
     tocRef.current?.dismiss();
@@ -80,9 +110,9 @@ export default function ReadBook() {
         backgroundColor: colors.card,
       }}
     >
-      <View 
-        className={`${isFullScreen ? 'hidden' : ''} flex flex-row items-center`}
-        style={{ paddingTop: insets.top, backgroundColor: colors.card, }}
+      <View
+        className={`${isFullScreen ? "hidden" : ""} flex flex-row items-center`}
+        style={{ paddingTop: insets.top, backgroundColor: colors.card }}
       >
         <HeaderBackButton tintColor={colors.text} onPress={goBack} />
         <View className="flex-1 flex flex-row justify-end">
@@ -91,12 +121,18 @@ export default function ReadBook() {
             onPress={toggleBookmark}
             onLongPress={() => bookmarksRef.current?.present()}
           >
-            <BookmarkIcon stroke={colors.text} fill={isBookmarked ? colors.text : 'transparent'} />
+            <BookmarkIcon
+              stroke={colors.text}
+              fill={isBookmarked ? colors.text : "transparent"}
+            />
           </Button>
           <Button variant="ghost" onPress={() => tocRef.current?.present()}>
             <Chapters stroke={colors.text} />
           </Button>
-          <Button variant="ghost" onPress={() => settingsRef.current?.present()}>
+          <Button
+            variant="ghost"
+            onPress={() => settingsRef.current?.present()}
+          >
             <Settings stroke={colors.text} />
           </Button>
         </View>
@@ -105,7 +141,7 @@ export default function ReadBook() {
         src={FileSystem.documentDirectory + `${fileName}.epub`}
         fileSystem={useFileSystem}
         width={width}
-        height={isFullScreen ? height : height-insets.top}
+        height={isFullScreen ? height : height - insets.top}
         waitForLocationsReady
         onDoubleTap={() => {
           setIsFullScreen((prev) => !prev);
@@ -121,10 +157,9 @@ export default function ReadBook() {
 
 // eslint-disable-next-line react/display-name
 const TableOfContents = forwardRef<
-  BottomSheetModalMethods, 
-  { close: VoidCallback; }
->(({close}, ref) => {
-
+  BottomSheetModalMethods,
+  { close: VoidCallback }
+>(({ close }, ref) => {
   const { toc, section, goToLocation } = useReader();
 
   const renderItem = useCallback(
@@ -134,14 +169,14 @@ const TableOfContents = forwardRef<
         variant={item.id === section?.id ? "outline" : "ghost"}
         className="w-full flex flex-row justify-between items-center my-1"
         onPress={() => {
-          goToLocation(item.href.split('/')[1]);
+          goToLocation(item.href.split("/")[1]);
           close();
         }}
       >
         <Text className="italic">{item.label}</Text>
       </Button>
     ),
-    [goToLocation, close, section]
+    [goToLocation, close, section],
   );
 
   return (
@@ -149,7 +184,7 @@ const TableOfContents = forwardRef<
       <BottomModal
         ref={ref}
         index={0}
-        snapPoints={['50%', '90%']}
+        snapPoints={["50%", "90%"]}
         enableDynamicSizing={false}
         enablePanDownToClose
         className="w-full flex-1 px-5 mt-4 shadow shadow-neutral-800"
@@ -157,9 +192,7 @@ const TableOfContents = forwardRef<
         handleClassName="dark:bg-neutral-300"
       >
         <View className="flex flex-row items-center justify-between">
-          <Text className="text-2xl font-semibold">
-            Table of Contents
-          </Text>
+          <Text className="text-2xl font-semibold">Table of Contents</Text>
 
           <Button variant="ghost" onPress={close}>
             <CloseIcon className="dark:stroke-white" />
@@ -170,7 +203,7 @@ const TableOfContents = forwardRef<
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
         />
       </BottomModal>
     </BottomSheetModalProvider>
@@ -179,18 +212,19 @@ const TableOfContents = forwardRef<
 
 // eslint-disable-next-line react/display-name
 const BookmarksList = forwardRef<
-  BottomSheetModalMethods, 
-  { close: VoidCallback; }
->(({close}, ref) => {
-
-  const { bookmarks, getCurrentLocation, goToLocation, removeBookmark } = useReader();
+  BottomSheetModalMethods,
+  { close: VoidCallback }
+>(({ close }, ref) => {
+  const { bookmarks, getCurrentLocation, goToLocation, removeBookmark } =
+    useReader();
 
   const currentLocation = getCurrentLocation();
 
   const renderItem = useCallback(
     ({ item }: { item: Bookmark }) => {
-      const mark = ( item.location.start.cfi === currentLocation?.start.cfi &&
-                      item.location.end.cfi === currentLocation?.end.cfi );
+      const mark =
+        item.location.start.cfi === currentLocation?.start.cfi &&
+        item.location.end.cfi === currentLocation?.end.cfi;
       return (
         <View className="flex flex-row items-center">
           <Button
@@ -208,7 +242,9 @@ const BookmarksList = forwardRef<
             </View>
             <View>
               <Text>Chapter:</Text>
-              <Text className="italic" numberOfLines={1}>{item.text}</Text>
+              <Text className="italic" numberOfLines={1}>
+                {item.text}
+              </Text>
             </View>
           </Button>
           <Button variant="ghost" onPress={() => removeBookmark(item)}>
@@ -217,11 +253,14 @@ const BookmarksList = forwardRef<
         </View>
       );
     },
-    [goToLocation, close, currentLocation, removeBookmark]
+    [goToLocation, close, currentLocation, removeBookmark],
   );
 
   const sorted = useMemo(
-    () => bookmarks.sort((a, b) => a.location.start.location - b.location.start.location), 
+    () =>
+      bookmarks.sort(
+        (a, b) => a.location.start.location - b.location.start.location,
+      ),
     [bookmarks],
   );
 
@@ -230,7 +269,7 @@ const BookmarksList = forwardRef<
       <BottomModal
         ref={ref}
         index={0}
-        snapPoints={['50%', '90%']}
+        snapPoints={["50%", "90%"]}
         enableDynamicSizing={false}
         enablePanDownToClose
         className="w-full flex-1 px-5 mt-4 shadow shadow-neutral-800"
@@ -238,9 +277,7 @@ const BookmarksList = forwardRef<
         handleClassName="dark:bg-neutral-300"
       >
         <View className="flex flex-row items-center justify-between">
-          <Text className="text-2xl font-semibold">
-            Bookmarks
-          </Text>
+          <Text className="text-2xl font-semibold">Bookmarks</Text>
 
           <Button variant="ghost" onPress={close}>
             <CloseIcon className="dark:stroke-white" />
@@ -251,7 +288,7 @@ const BookmarksList = forwardRef<
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => `${item.id}`}
           renderItem={renderItem}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
         />
       </BottomModal>
     </BottomSheetModalProvider>
@@ -264,31 +301,34 @@ const MIN_FONT_SIZE = 10;
 // eslint-disable-next-line react/display-name
 const SettingsSheet = forwardRef<
   BottomSheetModalMethods,
-  { close: VoidCallback; }
+  { close: VoidCallback }
 >(({ close }, ref) => {
-  const {
-    changeTheme,
-    changeFontSize,
-    changeFontFamily,
-    changeFlow,
-  } = useReader();
+  const { changeTheme, changeFontSize, changeFontFamily, changeFlow } =
+    useReader();
 
-  const [selectedTheme, setSelectedTheme] = useState<keyof typeof Themes>('LIGHT');
+  const [selectedTheme, setSelectedTheme] =
+    useState<keyof typeof Themes>("LIGHT");
   const [font, setFont] = useState<string>("Helvetica");
   const [fontSize, setFontSize] = useState(16);
-  const [ flow, setFlow ] = useState<'paginated' | 'scrolled'>('paginated');
+  const [flow, setFlow] = useState<"paginated" | "scrolled">("paginated");
 
-  const updateTheme = useCallback((newTheme: string | undefined) => {
-    if (!newTheme) return;
-    setSelectedTheme(newTheme as keyof typeof Themes);
-    changeTheme(Themes[newTheme as keyof typeof Themes]);
-  }, [changeTheme]);
+  const updateTheme = useCallback(
+    (newTheme: string | undefined) => {
+      if (!newTheme) return;
+      setSelectedTheme(newTheme as keyof typeof Themes);
+      changeTheme(Themes[newTheme as keyof typeof Themes]);
+    },
+    [changeTheme],
+  );
 
-  const updateFont = useCallback((newFont: string | undefined) => {
-    if (!newFont) return;
-    setFont(newFont);
-    changeFontFamily(newFont);
-  }, [changeFontFamily]);
+  const updateFont = useCallback(
+    (newFont: string | undefined) => {
+      if (!newFont) return;
+      setFont(newFont);
+      changeFontFamily(newFont);
+    },
+    [changeFontFamily],
+  );
 
   const increaseFontSize = () => {
     if (fontSize < MAX_FONT_SIZE) {
@@ -304,18 +344,21 @@ const SettingsSheet = forwardRef<
     }
   };
 
-  const updateFlow = useCallback((newFlow: string | undefined) => {
-    if (!newFlow) return;
-    setFlow(newFlow as 'paginated' | 'scrolled');
-    changeFlow(newFlow as 'paginated' | 'scrolled');
-  }, [changeFlow]);
+  const updateFlow = useCallback(
+    (newFlow: string | undefined) => {
+      if (!newFlow) return;
+      setFlow(newFlow as "paginated" | "scrolled");
+      changeFlow(newFlow as "paginated" | "scrolled");
+    },
+    [changeFlow],
+  );
 
   return (
     <BottomSheetModalProvider>
       <BottomModal
         ref={ref}
         index={0}
-        snapPoints={['35%']}
+        snapPoints={["35%"]}
         enableDynamicSizing={false}
         enablePanDownToClose
         className="w-full flex-1 px-5 mt-4 shadow shadow-neutral-800"
@@ -327,7 +370,12 @@ const SettingsSheet = forwardRef<
             <CloseIcon className="dark:stroke-white" />
           </Button>
         </View>
-        <ToggleGroup type="single" onValueChange={updateTheme} value={selectedTheme} className="justify-start">
+        <ToggleGroup
+          type="single"
+          onValueChange={updateTheme}
+          value={selectedTheme}
+          className="justify-start"
+        >
           <ToggleGroupItem value="LIGHT" size="lg">
             <View className="w-8 h-8 bg-white border border-black dark:border-none rounded-full"></View>
           </ToggleGroupItem>
@@ -351,16 +399,31 @@ const SettingsSheet = forwardRef<
             </ToggleGroupItem>
           </ToggleGroup>
           <View className="flex-1 flex flex-row items-center justify-evenly">
-            <Button variant="secondary" onPress={decreaseFontSize} disabled={fontSize <= MIN_FONT_SIZE} size="icon">
+            <Button
+              variant="secondary"
+              onPress={decreaseFontSize}
+              disabled={fontSize <= MIN_FONT_SIZE}
+              size="icon"
+            >
               <Text className="text-2xl">-</Text>
             </Button>
             <Text className="w-12 text-lg text-center">{fontSize}</Text>
-            <Button variant="secondary" onPress={increaseFontSize} disabled={fontSize >= MAX_FONT_SIZE} size="icon">
+            <Button
+              variant="secondary"
+              onPress={increaseFontSize}
+              disabled={fontSize >= MAX_FONT_SIZE}
+              size="icon"
+            >
               <Text className="text-2xl">+</Text>
             </Button>
           </View>
         </View>
-        <ToggleGroup type="single" onValueChange={updateFlow} value={flow} className="justify-center mt-4">
+        <ToggleGroup
+          type="single"
+          onValueChange={updateFlow}
+          value={flow}
+          className="justify-center mt-4"
+        >
           <ToggleGroupItem value="paginated" size="lg" className="flex-1">
             <Text>Paginated</Text>
           </ToggleGroupItem>

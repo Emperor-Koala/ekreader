@@ -1,4 +1,4 @@
-import { useNetInfo } from '@react-native-community/netinfo';
+import { useNetInfo } from "@react-native-community/netinfo";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { deleteItemAsync, getItem, setItem } from "expo-secure-store";
@@ -39,14 +39,14 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const { isConnected } = useNetInfo();
-  
+
   const queryClient = useQueryClient();
 
   const currentUser = useQuery({
     queryKey: ["currentUser", isConnected],
     queryFn: async () => {
       if (!isConnected) return null;
-      
+
       const server = getItem(SecureStorageKeys.server);
       if (!server) {
         return null;
