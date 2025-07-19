@@ -22,19 +22,18 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="(library)"
         options={{
           title: "Library",
           tabBarIcon: ({ color }) => <House color={color} />,
         }}
       />
       <Tabs.Screen
-        name="offline"
+        name="(offline)"
         options={{
           headerTitle: "Offline Downloads",
           title: "Offline",
           tabBarIcon: ({ color }) => <Download color={color} />,
-          headerShown: true,
         }}
       />
       <Tabs.Screen

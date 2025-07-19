@@ -24,8 +24,8 @@ export const BookItem = ({
     <Link
       href={
         offline
-          ? `/local/${book.metadata.title}-${book.id}`
-          : `/book/${book.id}`
+          ? `./book/${book.metadata.title}-${book.id}`
+          : `./book/${book.id}`
       }
       asChild
     >

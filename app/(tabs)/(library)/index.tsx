@@ -1,4 +1,5 @@
 import { useNetInfo } from "@react-native-community/netinfo";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { FlashList } from "@shopify/flash-list";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "expo-router";
@@ -8,7 +9,6 @@ import {
   GestureHandlerRootView,
   RefreshControl,
 } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuthContext } from "~/components/AuthProvider";
 import { BookItem } from "~/components/BookItem";
 import { SeriesItem } from "~/components/SeriesItem";
@@ -25,6 +25,7 @@ import { useLibraries } from "~/lib/query/librariesList";
 import { useRecentlyAddedSeriesList } from "~/lib/query/seriesLists";
 
 export default function HomeScreen() {
+  const paddingBottom = useBottomTabBarHeight();
   const queryClient = useQueryClient();
   const { isConnected } = useNetInfo();
 
@@ -64,7 +65,7 @@ export default function HomeScreen() {
   }, [queryClient, keepReading, recentlyAddedBooks, recentlyAddedSeries]);
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900 pb-16">
+    <View className="flex-1 bg-neutral-200 dark:bg-neutral-900" style={{paddingBottom}}>
       {isConnected === null ? (
         <></>
       ) : !isConnected ? (
@@ -177,8 +178,8 @@ export default function HomeScreen() {
               ) : (
                 libraries.data!.map((lib) => (
                   <Link
-                    href={`/library/${lib.id}`}
-                    key={`/library/${lib.id}`}
+                    href={`./library/${lib.id}`}
+                    key={`./library/${lib.id}`}
                     asChild
                   >
                     <Button
@@ -196,6 +197,6 @@ export default function HomeScreen() {
           </ScrollView>
         </GestureHandlerRootView>
       )}
-    </SafeAreaView>
+    </View>
   );
 }

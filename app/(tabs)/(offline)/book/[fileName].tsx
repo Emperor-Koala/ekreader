@@ -1,5 +1,5 @@
+import * as FileSystem from "expo-file-system";
 import { Link, useLocalSearchParams, useNavigation } from "expo-router";
-import { getItem } from "expo-secure-store";
 import { BookOpen } from "lucide-react-native";
 import { DateTime } from "luxon";
 import { useCallback } from "react";
@@ -10,10 +10,8 @@ import { Text } from "~/components/ui/text";
 import { Trash } from "~/lib/icons/Trash";
 import { useOfflineDetails } from "~/lib/query/bookDetails";
 import { useOfflineBookList } from "~/lib/query/bookLists";
-import { SecureStorageKeys } from "~/lib/secureStorageKeys";
 
 export default function BookDetails() {
-  const server = getItem(SecureStorageKeys.server);
   const { fileName } = useLocalSearchParams<{ fileName: string }>();
   const { goBack } = useNavigation();
 
@@ -42,7 +40,7 @@ export default function BookDetails() {
             <View className="w-1/2 max-w-44 mb-4 aspect-[0.7] bg-neutral-500 shadow">
               <Image
                 className="w-full h-full"
-                source={`${server}/api/v1/books/${data!.id}/thumbnail`}
+                source={`${FileSystem.documentDirectory}${fileName}.thumbnail`}
                 placeholder={require("~/assets/images/react-logo.png")}
               />
             </View>
