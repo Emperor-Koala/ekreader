@@ -1,9 +1,8 @@
-import { FlashList } from "@shopify/flash-list";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { ActivityIndicator, SafeAreaView, ScrollView, View } from "react-native";
 import { GestureHandlerRootView, RefreshControl } from "react-native-gesture-handler";
-import { BookItem } from "~/components/BookItem";
+import { BooksGrid } from "~/components/BooksGrid";
 import { Text } from "~/components/ui/text";
 import { useOfflineBookList } from "~/lib/query/bookLists";
 
@@ -31,18 +30,7 @@ export default function OfflinePage() {
                             ? <ActivityIndicator />
                             : isError
                             ? (<Text>{error.message}</Text>)
-                            : (
-                                <FlashList
-                                    data={data}
-                                    numColumns={2}
-                                    style={{ width: "100%", padding: 16 }}
-                                    renderItem={({item: book}) => (
-                                        <View className="p-2">
-                                            <BookItem book={book.metadata} thumbnail={book.thumbnail} className="w-full" offline />
-                                        </View>
-                                    )}
-                                />
-                            )
+                            : (<BooksGrid books={data!} offline />)
                         }
                     </View>
                 </ScrollView>

@@ -72,6 +72,43 @@ export const useRecentlyAddedBooksList = () => {
   });
 };
 
+export const useLibraryBooks = (libraryId: string) => {
+  const { currentUser } = useAuthContext();
+
+  return useInfiniteQuery({
+    queryKey: ['library', 'book-list', libraryId, currentUser?.data?.id],
+    queryFn: async ({ pageParam }) => {
+      const response = await axios.post(
+        '/api/v1/books/list',
+        {
+          condition: {
+            allOf: [
+              {
+                libraryId: {
+                  operator: "is",
+                  value: libraryId,
+                },
+              },
+            ],
+          },
+        },
+        {
+          params: {
+            sort: 'series,metadata.numberSort,asc',
+            page: pageParam,
+          },
+        }
+      );
+
+      return PaginatedBookList.parse(response.data);
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      return lastPage.last ? null : lastPage.pageable.pageNumber+1;
+    },
+  });
+};
+
 export const useOfflineBookList = () => {
   const server = getItem(SecureStorageKeys.server);
 

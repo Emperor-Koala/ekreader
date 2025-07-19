@@ -58,9 +58,10 @@ export default function RootLayout() {
           <ReaderProvider>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false, title: "Library" }} />
-              <Stack.Screen name="book/[bookId]/index" options={{ title: "" }} />
-              <Stack.Screen name="local/[fileName]/index" options={{ title: "" }} />
-              <Stack.Screen name="read/[fileName]" options={{ title: "", headerShown: false }} />
+              <Stack.Screen name="book/[bookId]" options={{ title: "" }} />
+              <Stack.Screen name="local/[fileName]" options={{ title: "" }} />
+              <Stack.Screen name="read/[fileName]" options={{ headerShown: false }} />
+              <Stack.Screen name="library/[libraryId]" />
               <Stack.Screen name="+not-found" />
             </Stack>
             <StatusBar style={isDarkColorScheme ? "light" : "dark"} />

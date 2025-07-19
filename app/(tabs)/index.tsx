@@ -1,6 +1,7 @@
 import { useNetInfo } from '@react-native-community/netinfo';
 import { FlashList } from "@shopify/flash-list";
 import { useQueryClient } from '@tanstack/react-query';
+import { Link } from 'expo-router';
 import { useCallback, useMemo } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import { GestureHandlerRootView, RefreshControl } from 'react-native-gesture-handler';
@@ -8,13 +9,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthContext } from "~/components/AuthProvider";
 import { BookItem } from "~/components/BookItem";
 import { SeriesItem } from '~/components/SeriesItem';
+import { Button } from '~/components/ui/button';
 import { Text } from "~/components/ui/text";
+import { ChevronRight } from '~/lib/icons/ChevronRight';
 import { CloudOff } from '~/lib/icons/CloudOff';
 import { UserLock } from '~/lib/icons/UserLock';
 import {
   useKeepReadingList,
   useRecentlyAddedBooksList,
 } from "~/lib/query/bookLists";
+import { useLibraries } from '~/lib/query/librariesList';
 import { useRecentlyAddedSeriesList } from "~/lib/query/seriesLists";
 
 export default function HomeScreen() {
@@ -25,6 +29,8 @@ export default function HomeScreen() {
   const keepReading = useKeepReadingList();
   const recentlyAddedBooks = useRecentlyAddedBooksList();
   const recentlyAddedSeries = useRecentlyAddedSeriesList();
+
+  const libraries = useLibraries();
 
   const keepReadingData = useMemo(() => {
     if (keepReading.isLoading || keepReading.isError) return [];
@@ -94,7 +100,7 @@ export default function HomeScreen() {
                   keepReading.isLoading
                   ? <ActivityIndicator />
                   : keepReading.isError
-                  ? (<Text>{keepReading.error.message}</Text>)
+                  ? (<Text className="px-6">{keepReading.error.message}</Text>)
                   : (
                     <FlashList
                       data={keepReadingData}
@@ -116,7 +122,7 @@ export default function HomeScreen() {
                   recentlyAddedBooks.isLoading
                   ? <ActivityIndicator />
                   : recentlyAddedBooks.isError
-                  ? (<Text>{recentlyAddedBooks.error.message}</Text>)
+                  ? (<Text className="px-6">{recentlyAddedBooks.error.message}</Text>)
                   : (
                     <FlashList
                       data={recentlyAddedBooksData}
@@ -139,7 +145,7 @@ export default function HomeScreen() {
                   recentlyAddedSeries.isLoading
                   ? <ActivityIndicator />
                   : recentlyAddedSeries.isError
-                  ? (<Text>{recentlyAddedSeries.error.message}</Text>)
+                  ? (<Text className="px-6">{recentlyAddedSeries.error.message}</Text>)
                   : (
                     <FlashList
                       data={recentlyAddedSeriesData}
@@ -155,7 +161,23 @@ export default function HomeScreen() {
                   )
                 }
               </View>
-              {/* TODO: Browse section */}
+              <View className="mb-8 px-4 gap-y-2">
+                <Text className="text-2xl mb-2 pt-4">Browse</Text>
+                {
+                  libraries.isLoading
+                  ? (<ActivityIndicator />)
+                  : libraries.isError
+                  ? (<Text className="px-6">{libraries.error.message}</Text>)
+                  : libraries.data!.map((lib) => (
+                    <Link href={`/library/${lib.id}`} key={`/library/${lib.id}`} asChild>
+                      <Button variant="secondary" size="lg" className="flex-row justify-between">
+                        <Text>{lib.name}</Text>
+                        <ChevronRight className="dark:stroke-white" />
+                      </Button>
+                    </Link>
+                  ))
+                }
+              </View>
             </ScrollView>
           </GestureHandlerRootView>
         )
