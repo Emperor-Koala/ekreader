@@ -65,7 +65,7 @@ export default function HomeScreen() {
   }, [queryClient, keepReading, recentlyAddedBooks, recentlyAddedSeries]);
 
   return (
-    <View className="flex-1 bg-neutral-200 dark:bg-neutral-900" style={{paddingBottom}}>
+    <View className="flex-1 bg-neutral-200 dark:bg-neutral-900">
       {isConnected === null ? (
         <></>
       ) : !isConnected ? (
@@ -101,6 +101,7 @@ export default function HomeScreen() {
             refreshControl={
               <RefreshControl refreshing={false} onRefresh={onRefresh} />
             }
+             style={{paddingBottom}}
           >
             <View className="mb-3">
               <Text className="text-2xl mb-2 pt-4 px-4">Keep Reading</Text>
@@ -112,7 +113,7 @@ export default function HomeScreen() {
                 <FlashList
                   data={keepReadingData}
                   horizontal
-                  contentContainerStyle={{ paddingHorizontal: 16 }}
+                  contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 4 }}
                   renderItem={({ item: book }) => (
                     <View className="w-40 p-2">
                       <BookItem book={book} />
@@ -135,7 +136,7 @@ export default function HomeScreen() {
                   data={recentlyAddedBooksData}
                   horizontal
                   onEndReached={recentlyAddedBooks.fetchNextPage}
-                  contentContainerStyle={{ paddingHorizontal: 16 }}
+                  contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 4 }}
                   renderItem={({ item: book }) => (
                     <View className="p-2">
                       <BookItem book={book} />
@@ -160,7 +161,7 @@ export default function HomeScreen() {
                   data={recentlyAddedSeriesData}
                   horizontal
                   onEndReached={recentlyAddedSeries.fetchNextPage}
-                  contentContainerStyle={{ paddingHorizontal: 16 }}
+                  contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 4 }}
                   renderItem={({ item: series }) => (
                     <View className="p-2">
                       <SeriesItem series={series} />

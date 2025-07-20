@@ -1,7 +1,6 @@
 import { Tabs } from "expo-router";
 import { Download } from "lucide-react-native";
 import React from "react";
-import { Platform } from "react-native";
 
 import { HapticTab } from "~/components/HapticTab";
 import { House, Settings } from "~/lib/icons";
@@ -12,13 +11,6 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: "absolute",
-          },
-          default: {},
-        }),
       }}
     >
       <Tabs.Screen

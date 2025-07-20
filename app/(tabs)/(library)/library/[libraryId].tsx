@@ -16,10 +16,12 @@ export default function Library() {
       .map((book) => ({ metadata: book }));
   }, [data]);
 
+  // TODO infinite scroll
+
   return (
     <>
       <Stack.Screen options={{ title: library.data?.name ?? "" }} />
-      <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900 pb-16">
+      <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900">
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator />

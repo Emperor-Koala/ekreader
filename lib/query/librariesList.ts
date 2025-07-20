@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { z } from "zod";
+import { useAuthContext } from "~/components/AuthProvider";
 import { Library } from "../types/Library";
 
 export const useLibraries = () =>
@@ -13,12 +14,15 @@ export const useLibraries = () =>
     },
   });
 
-export const useLibrary = (libraryId: string) =>
-  useQuery({
-    queryKey: ["library", libraryId],
+export const useLibrary = (libraryId: string) => {
+  const { currentUser } = useAuthContext();
+
+  return useQuery({
+    queryKey: ["library", libraryId, currentUser.data?.id],
     queryFn: async () => {
       const response = await axios.get(`/api/v1/libraries/${libraryId}`);
 
       return Library.parse(response.data);
     },
   });
+};

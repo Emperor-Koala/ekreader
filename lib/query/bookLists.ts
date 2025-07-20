@@ -20,7 +20,7 @@ export const useKeepReadingList = () => {
   const { currentUser } = useAuthContext();
 
   return useInfiniteQuery({
-    queryKey: ["home", "book-list", "keep-reading", currentUser?.data?.id],
+    queryKey: ["home", "book-list", "keep-reading", currentUser.data?.id],
     queryFn: async ({ pageParam }) => {
       const response = await axios.post(
         "/api/v1/books/list",
@@ -54,7 +54,7 @@ export const useRecentlyAddedBooksList = () => {
   const { currentUser } = useAuthContext();
 
   return useInfiniteQuery({
-    queryKey: ["home", "book-list", "recently-added", currentUser?.data?.id],
+    queryKey: ["home", "book-list", "recently-added", currentUser.data?.id],
     queryFn: async ({ pageParam }) => {
       const response = await axios.post(
         "/api/v1/books/list",
@@ -81,7 +81,7 @@ export const useLibraryBooks = (libraryId: string) => {
   const { currentUser } = useAuthContext();
 
   return useInfiniteQuery({
-    queryKey: ["library", "book-list", libraryId, currentUser?.data?.id],
+    queryKey: ["library", "book-list", libraryId, currentUser.data?.id],
     queryFn: async ({ pageParam }) => {
       const response = await axios.post(
         "/api/v1/books/list",
@@ -100,6 +100,43 @@ export const useLibraryBooks = (libraryId: string) => {
         {
           params: {
             sort: "series,metadata.numberSort,asc",
+            page: pageParam,
+          },
+        },
+      );
+
+      return PaginatedBookList.parse(response.data);
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      return lastPage.last ? null : lastPage.pageable.pageNumber + 1;
+    },
+  });
+};
+
+export const useSeriesBooks = (seriesId: string) => {
+  const { currentUser } = useAuthContext();
+
+  return useInfiniteQuery({
+    queryKey: ["series", "book-list", seriesId, currentUser.data?.id],
+    queryFn: async ({ pageParam }) => {
+      const response = await axios.post(
+        "/api/v1/books/list",
+        {
+          condition: {
+            allOf: [
+              {
+                seriesId: {
+                  operator: "is",
+                  value: seriesId,
+                },
+              },
+            ],
+          },
+        },
+        {
+          params: {
+            sort: "metadata.numberSort,asc",
             page: pageParam,
           },
         },

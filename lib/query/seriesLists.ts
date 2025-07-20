@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useAuthContext } from "~/components/AuthProvider";
 import { paginatedResponse } from "../types/PaginatedResponse";
@@ -26,5 +26,18 @@ export const useRecentlyAddedSeriesList = () => {
       return lastPage.last ? null : lastPage.pageable.pageNumber + 1;
     },
     enabled: !!currentUser,
+  });
+};
+
+export const useSeries = (seriesId: string) => {
+  const { currentUser } = useAuthContext();
+
+  return useQuery({
+    queryKey: ["series", seriesId, currentUser.data?.id],
+    queryFn: async () => {
+      const response = await axios.get(`/api/v1/series/${seriesId}`);
+
+      return Series.parse(response.data);
+    },
   });
 };

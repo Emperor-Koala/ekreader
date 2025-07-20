@@ -130,7 +130,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       setItem(SecureStorageKeys.server, creds.server);
 
       // Update currentUser in query cache
-      queryClient.setQueryData(["currentUser"], user);
+      queryClient.setQueryData(["currentUser", isConnected], user);
     },
   });
 
@@ -143,7 +143,7 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({
       await deleteItemAsync(SecureStorageKeys.remember);
 
       // remove current user data
-      queryClient.setQueryData(["currentUser"], null);
+      queryClient.setQueryData(["currentUser", isConnected], null);
     },
   });
 

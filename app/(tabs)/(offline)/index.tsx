@@ -23,6 +23,8 @@ export default function OfflinePage() {
     refetch();
   }, [queryClient, refetch]);
 
+  // TODO infinite scroll
+
   return (
     <GestureHandlerRootView>
       <SafeAreaView className="flex-1 bg-neutral-200 dark:bg-neutral-900">
