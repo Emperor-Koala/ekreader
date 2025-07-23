@@ -1,4 +1,3 @@
-import { ReaderProvider } from "@epubjs-react-native/core";
 import {
   DarkTheme,
   DefaultTheme,
@@ -15,6 +14,8 @@ import Toast from "react-native-toast-message";
 import { AuthProvider } from "~/components/AuthProvider";
 import "~/global.css";
 import { NAV_THEME } from "~/lib/constants";
+// import { ReaderProvider } from "~/lib/epub/ReaderContext";
+import { ReaderProvider } from '@epubjs-react-native/core';
 import "~/lib/http";
 import { useColorScheme } from "~/lib/useColorScheme";
 
@@ -67,9 +68,9 @@ export default function RootLayout() {
               />
               <Stack.Screen name="+not-found" />
             </Stack>
-            <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-            <Toast />
           </ReaderProvider>
+          <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+          <Toast />
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>

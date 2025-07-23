@@ -14,7 +14,8 @@
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
-        }
+        },
+        "LSSupportsOpeningDocumentsInPlace": true
       },
       "config": {
         "usesNonExemptEncryption": false
