@@ -12,7 +12,7 @@
     "format": "prettier . --write"
   },
   "dependencies": {
-    "@epubjs-react-native/core": "^1.4.7",
+    "@epubjs-react-native/core": "github:Emperor-Koala/epubjs-react-native#update/faster-single-tap",
     "@epubjs-react-native/expo-file-system": "^1.1.4",
     "@expo/vector-icons": "^14.1.0",
     "@gorhom/bottom-sheet": "^5.1.6",

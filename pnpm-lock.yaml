@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@epubjs-react-native/core':
-        specifier: ^1.4.7
-        version: 1.4.7(react-native-gesture-handler@2.24.0(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.13.5(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        specifier: github:Emperor-Koala/epubjs-react-native#update/faster-single-tap
+        version: https://codeload.github.com/Emperor-Koala/epubjs-react-native/tar.gz/f47739f031583d6d33ec5dd3d84ab622c68684b2(react-native-gesture-handler@2.24.0(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.13.5(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@epubjs-react-native/expo-file-system':
         specifier: ^1.1.4
         version: 1.1.4(expo-file-system@18.1.11(expo@53.0.11(@babel/core@7.27.4)(@expo/metro-runtime@5.0.4(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0)))(react-native-webview@13.13.5(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0)))(react@19.0.0)
@@ -720,8 +720,9 @@ packages:
   '@emnapi/wasi-threads@1.0.2':
     resolution: {integrity: sha512-5n3nTJblwRi8LlXkJ9eBzu+kZR8Yxcc7ubakyQTFzPMtIhFpUBRbsnc2Dv88IZDIbCDlBiWrknhB4Lsz7mg6BA==}
 
-  '@epubjs-react-native/core@1.4.7':
-    resolution: {integrity: sha512-bDzL0DU13IyfRZRydz36bh7HqDyUV3VKIFYOAYPBejMUAK4LYZclUb+NdgiwyynhhkUZQNdaWgSdtAGzGmsxEw==}
+  '@epubjs-react-native/core@https://codeload.github.com/Emperor-Koala/epubjs-react-native/tar.gz/f47739f031583d6d33ec5dd3d84ab622c68684b2':
+    resolution: {tarball: https://codeload.github.com/Emperor-Koala/epubjs-react-native/tar.gz/f47739f031583d6d33ec5dd3d84ab622c68684b2}
+    version: 1.4.7
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -5279,7 +5280,7 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@epubjs-react-native/core@1.4.7(react-native-gesture-handler@2.24.0(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.13.5(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
+  '@epubjs-react-native/core@https://codeload.github.com/Emperor-Koala/epubjs-react-native/tar.gz/f47739f031583d6d33ec5dd3d84ab622c68684b2(react-native-gesture-handler@2.24.0(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.13.5(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
       react: 19.0.0
       react-native: 0.79.3(@babel/core@7.27.4)(@types/react@19.0.14)(react@19.0.0)

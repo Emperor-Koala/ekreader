@@ -132,7 +132,7 @@ export default function ReadBook() {
       <Reader
         src={`${FS.documentDirectory}${fileName}.epub`}
         fileSystem={useFileSystem}
-        onSingleTap={() => { // TODO double and single tap both are unsatisfactory
+        onSingleTap={() => {
           setIsFullScreen((prev) => !prev);
         }}
       />
