@@ -132,7 +132,7 @@ export default function ReadBook() {
       <Reader
         src={`${FS.documentDirectory}${fileName}.epub`}
         fileSystem={useFileSystem}
-        onDoubleTap={() => { // TODO double and single tap both are unsatisfactory
+        onSingleTap={() => { // TODO double and single tap both are unsatisfactory
           setIsFullScreen((prev) => !prev);
         }}
       />
@@ -292,8 +292,6 @@ const SettingsSheet = forwardRef<
 >(({ close }, ref) => {
   const { changeTheme, changeFontSize, changeFontFamily, flow, changeFlow } =
     useReader();
-
-    console.debug(flow);
 
   const [theme, setTheme] = useState('LIGHT');
   const [fontSize, setFontSize] = useState(16);
