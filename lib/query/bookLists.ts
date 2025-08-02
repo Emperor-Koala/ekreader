@@ -7,6 +7,8 @@ import {
 import axios from "axios";
 import * as FileSystem from "expo-file-system";
 import { getItem } from "expo-secure-store";
+import { DateTime } from "luxon";
+import { useMemo } from "react";
 import { z } from "zod";
 import { useAuthContext } from "~/components/AuthProvider";
 import { SecureStorageKeys } from "../secureStorageKeys";
@@ -156,6 +158,28 @@ export const useOfflineBookList = () => {
 
   const queryClient = useQueryClient();
 
+  const cookieHeader = useMemo(() => {
+    const session = getItem(SecureStorageKeys.session);
+    const rememberMe = getItem(SecureStorageKeys.remember);
+  
+    let cookie = [];
+    if (session) {
+      cookie.push(`${SecureStorageKeys.session}=${session}`);
+    }
+    if (rememberMe) {
+      if (rememberMe.includes(";")) {
+        const [value, expiry] = rememberMe.split(";");
+        if (DateTime.fromMillis(parseInt(expiry)) >= DateTime.now()) {
+          cookie.push(`${SecureStorageKeys.remember}=${value}`);
+        }
+      } else {
+        cookie.push(`${SecureStorageKeys.remember}=${rememberMe}`);
+      }
+    }
+
+    return cookie.join(';');
+  }, []);
+
   const query = useQuery({
     queryKey: ["offlineBooks"],
     queryFn: async () => {
@@ -195,7 +219,11 @@ export const useOfflineBookList = () => {
         FileSystem.createDownloadResumable(
           `${server}/api/v1/books/${book.id}/file`,
           FileSystem.documentDirectory + `${fileName}.epub`,
-          {},
+          {
+            headers: {
+              cookie: cookieHeader,
+            }
+          },
           onDownloadProgress,
         ).downloadAsync(),
         FileSystem.writeAsStringAsync(

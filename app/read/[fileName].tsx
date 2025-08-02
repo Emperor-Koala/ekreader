@@ -3,7 +3,7 @@ import { useFileSystem } from "@epubjs-react-native/expo-file-system";
 import {
   BottomSheetFlashList,
   BottomSheetModal,
-  BottomSheetModalProvider
+  BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { HeaderBackButton } from "@react-navigation/elements";
@@ -137,11 +137,11 @@ export default function ReadBook() {
         }}
       />
       
-    <BottomSheetModalProvider>
-      <TableOfContents ref={tocRef} close={closeToC} />
-      <BookmarksList ref={bookmarksRef} close={closeBookmarks} />
-      <SettingsSheet ref={settingsRef} close={closeSettings} />
-    </BottomSheetModalProvider>
+      <BottomSheetModalProvider>
+        <TableOfContents ref={tocRef} close={closeToC} />
+        <BookmarksList ref={bookmarksRef} close={closeBookmarks} />
+        <SettingsSheet ref={settingsRef} close={closeSettings} />
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }
