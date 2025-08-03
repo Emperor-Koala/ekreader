@@ -1,50 +1,15 @@
-# Welcome to your Expo app 👋
+# EKReader
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Introduction
 
-## Get started
+EKReader is a cross-platform e-reader that allows you to connect to your Komga instance and download your books for offline reading. 
 
-1. Install dependencies
+The interface was designed to mimic the original Komga web interface in order to provide a simple and clean experience. 
 
-   ```bash
-   npm install
-   ```
+EKReader was written with React Native to enable proper cross-platform support, so that anyone can connect to their library from any device and continue to use the same familiar interface.
 
-2. Start the app
+TODO: Add play store and app store logos
 
-   ```bash
-   npx expo start
-   ```
+## Contribution
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Contributions are welcome! Before you start working on something, it's best to check if there is an existing issue first. Please make sure to read the [Contributing guide](CONTRIBUTING.md) before making a pull request.
