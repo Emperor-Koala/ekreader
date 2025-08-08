@@ -10,6 +10,25 @@ EKReader was written with React Native to enable proper cross-platform support, 
 
 TODO: Add play store and app store logos
 
+## Roadmap/Features
+
+* [ ] Import books from other apps/sources
+* [ ] Login to multiple Komga servers
+* [ ] Annotations
+* [ ] Handle links
+* [ ] Book Search
+* [ ] Customizable App appearance
+    * [ ] Primary Background Color
+    * [ ] Accent color
+* [ ] Customizable Reader appearance
+    * [ ] Background Color
+    * [ ] Text Color
+    * [x] Font
+    * [x] Font Size
+    * [ ] Adjustable spread on tablets
+    * [x] Scrolling vs. Paginated
+
+
 ## Contribution
 
 Contributions are welcome! Before you start working on something, it's best to check if there is an existing issue first. Please make sure to read the [Contributing guide](CONTRIBUTING.md) before making a pull request.
